@@ -958,7 +958,7 @@ function renderProj(){
       const updLines=(d.progress||'').split('\n').filter(Boolean);
       return `<div class="pcard${isDone?' pstat-done':''}" id="pc-${r.num}">
   <div class="pcard-hdr" onclick="togPCard('${r.num}')">
-    <span class="pcard-arr op" id="pca-${r.num}">▶</span>
+    <span class="pcard-arr" id="pca-${r.num}">▶</span>
     <div class="pcard-info">
       <div class="pcard-title-row">
         <span class="pcard-num">${escH(r.num)}</span>
@@ -974,7 +974,7 @@ function renderProj(){
     <span class="pcard-saved" id="psv-${r.num}">✓ 已儲存</span>
     <button class="edit-btn" onclick="event.stopPropagation();openPEdit('${r.num}')">編輯</button>
   </div>
-  <div class="pcard-body op" id="pcb-${r.num}">
+  <div class="pcard-body" id="pcb-${r.num}">
     <div class="pfi">
       <div class="pfi-row"><span class="pfi-label">負責人</span><span class="pfi-val">${escH(d.owner||'—')}</span></div>
       <div class="pfi-row"><span class="pfi-label">預計上市</span><span class="pfi-val">${escH(d.launch||'—')}</span></div>
