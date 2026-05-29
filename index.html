@@ -2,645 +2,114 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>產品開發需求單取號系統</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>產品開發需求單系統 — 初始化歷史資料</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#FAFAF8;--surface:#fff;--border:#E8E5DF;--border-s:#C8C5BE;
-  --text:#1A1A18;--muted:#6B6B68;--hint:#A8A8A5;
-  --accent:#1F3864;--accent-l:#EEF2F8;--accent-t:#1F3864;
-  --green:#2D5A3D;--green-l:#EAF2EC;
-  --amber:#B8690A;--amber-l:#FEF3E2;
-  --red:#C0392B;--red-l:#FBEAE8;
-  --blue:#0369A1;--blue-l:#EFF8FF;
-  --radius:10px;--radius-s:6px;
-}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;min-height:100vh}
-
-/* ── Header ── */
-.header{background:var(--accent);color:#fff;padding:14px 16px 10px;user-select:none}
-.h-title{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px}
-.h-sub{font-size:11px;opacity:.75;margin-top:2px;display:flex;align-items:center;gap:6px}
-.sync-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;flex-shrink:0;transition:background .3s}
-.sync-dot.off{background:#fbbf24}
-.sync-dot.err{background:#f87171}
-
-/* ── Nav ── */
-.nav{display:flex;background:var(--surface);border-bottom:1px solid var(--border)}
-.nav-btn{flex:1;padding:10px 6px 8px;border:none;background:none;font-family:inherit;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent}
-.nav-btn.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700}
-
-/* ── Layout ── */
-.content{padding:14px;max-width:480px;margin:0 auto}
-.tab-pane{display:none}.tab-pane.active{display:block}
-
-/* ── Cards ── */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
-.card-title{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:12px;display:flex;align-items:center;gap:6px}
-
-/* ── Fields ── */
-.field{margin-bottom:10px}
-.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:500}
-.req{color:var(--red);margin-left:2px}
-.field input,.field select,.field textarea{
-  width:100%;padding:8px 10px;border:1px solid var(--border-s);
-  border-radius:var(--radius-s);font-family:inherit;font-size:13px;
-  background:var(--bg);color:var(--text);outline:none
-}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);background:#fff}
-.field textarea{resize:vertical;min-height:60px}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-
-/* ── Add option row ── */
-.add-opt-row{display:flex;gap:6px;margin-top:5px}
-.add-opt-input{flex:1;padding:6px 8px;border:1px solid var(--border-s);border-radius:var(--radius-s);font-family:inherit;font-size:12px;background:var(--bg);color:var(--text);outline:none}
-.add-opt-input:focus{border-color:var(--blue)}
-.add-opt-btn{padding:6px 10px;border:1px solid var(--blue);border-radius:var(--radius-s);background:var(--blue-l);color:var(--blue);font-family:inherit;font-size:12px;cursor:pointer;font-weight:500;white-space:nowrap}
-
-/* ── Preview ── */
-.preview-box{background:var(--accent-l);border:1px solid #C8D8F0;border-radius:var(--radius-s);padding:12px 14px;text-align:center;margin-bottom:12px}
-.preview-num{font-size:26px;font-weight:700;color:var(--accent);letter-spacing:2px;font-family:monospace}
-.preview-label{font-size:11px;color:var(--muted);margin-top:3px}
-
-/* ── Submit ── */
-.submit-btn{width:100%;padding:11px;border:none;border-radius:var(--radius-s);background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer}
-.submit-btn:hover{background:#162a4d}
-.submit-btn:disabled{background:#A8B4C4;cursor:not-allowed}
-
-/* ── Validation ── */
-.err-msg{color:var(--red);font-size:11px;margin-top:3px;display:none}
-
-/* ── Toast ── */
-.toast{background:var(--green-l);border:1px solid #9FC9AA;border-radius:var(--radius-s);padding:12px 14px;margin-bottom:12px;display:none}
-.toast-num{font-size:22px;font-weight:700;color:var(--green);font-family:monospace;display:flex;align-items:center;gap:8px}
-.toast-msg{font-size:12px;color:var(--green);margin-top:3px}
-.copy-big-btn{font-size:12px;padding:4px 10px;border:1px solid var(--green);border-radius:var(--radius-s);background:#fff;cursor:pointer;color:var(--green);font-family:inherit;margin-left:auto}
-
-/* ── History ── */
-.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
-.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-s);padding:8px;text-align:center}
-.stat-v{font-size:20px;font-weight:700;color:var(--accent)}
-.stat-l{font-size:10px;color:var(--muted)}
-
-.history-table{width:100%;border-collapse:collapse;font-size:12px}
-.history-table th{text-align:left;padding:7px 8px;border-bottom:2px solid var(--border-s);color:var(--muted);font-weight:600;font-size:11px}
-.history-table td{padding:7px 8px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
-.history-table tr:last-child td{border-bottom:none}
-.num-badge{background:var(--accent-l);color:var(--accent);font-weight:700;padding:2px 7px;border-radius:4px;font-size:11px;font-family:monospace;white-space:nowrap;display:inline-block}
-.copy-btn{font-size:10px;padding:2px 6px;border:1px solid var(--border-s);border-radius:4px;background:#fff;cursor:pointer;color:var(--muted);font-family:inherit;margin-left:4px;vertical-align:middle}
-.copy-btn:hover{background:var(--bg)}
-
-.cat-badge{display:inline-block;font-size:10px;padding:1px 6px;border-radius:20px;background:var(--blue-l);color:var(--blue);white-space:nowrap}
-.empty{text-align:center;padding:24px;color:var(--hint);font-size:13px}
-.loading-box{text-align:center;padding:30px;color:var(--hint)}
-.loading-spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-.filter-row{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
-.filter-select{padding:5px 8px;border:1px solid var(--border-s);border-radius:var(--radius-s);font-family:inherit;font-size:12px;background:var(--surface);color:var(--text);outline:none}
-.section-title{font-size:11px;font-weight:700;color:var(--hint);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
-
-/* ── Info box ── */
-.info-box{background:var(--amber-l);border:1px solid #E8C380;border-radius:var(--radius-s);padding:10px 12px;font-size:12px;color:#7A4500;margin-bottom:12px;line-height:1.65}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans TC',sans-serif;background:#FAFAF8;color:#1A1A18;font-size:14px;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.box{background:#fff;border:1px solid #E8E5DF;border-radius:12px;padding:28px 24px;max-width:500px;width:100%;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.title{font-size:17px;font-weight:700;color:#1F3864;margin-bottom:6px}
+.sub{font-size:12px;color:#6B6B68;margin-bottom:20px}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:16px}
+.info-item{background:#EEF2F8;border-radius:6px;padding:8px 10px}
+.info-k{font-size:11px;color:#6B6B68;font-family:monospace}
+.info-v{font-size:16px;font-weight:700;color:#1F3864}
+.btn{width:100%;padding:13px;border:none;border-radius:8px;background:#1F3864;color:#fff;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;margin-top:4px}
+.btn:disabled{background:#A8B4C4;cursor:not-allowed}
+.btn:hover:not(:disabled){background:#162a4d}
+.log{margin-top:14px;background:#1E1E1E;border-radius:6px;padding:12px;font-size:12px;color:#9CDCFE;font-family:monospace;line-height:1.7;max-height:220px;overflow-y:auto;display:none}
+.ok{color:#4ade80}.err{color:#f87171}.info{color:#fbbf24}
+.warning-box{background:#FEF3E2;border:1px solid #E8C380;border-radius:6px;padding:10px 12px;font-size:12px;color:#7A4500;margin-bottom:14px;line-height:1.6}
 </style>
 </head>
 <body>
+<div class="box">
+  <div class="title">📋 產品開發需求單 — 歷史資料初始化</div>
+  <div class="sub">將控管表現有取號記錄寫入 Firebase，完成後請關閉此頁面</div>
+  
+  <div class="warning-box">
+    ⚠️ 請確認 Firebase 規則允許寫入（開放模式），或在完成後恢復安全規則。<br>
+    此操作只需執行一次，重複執行會覆蓋現有資料。
+  </div>
 
-<div class="header">
-  <div class="h-title">
-    <span class="sync-dot" id="syn-dot"></span>
-    📋 產品開發需求單取號系統
+  <div class="info-grid">
+    <div class="info-item"><div class="info-k">TW113</div><div class="info-v">47 筆</div></div>
+    <div class="info-item"><div class="info-k">TW114</div><div class="info-v">61 筆</div></div>
+    <div class="info-item"><div class="info-k">TW115</div><div class="info-v">30 筆</div></div>
+    <div class="info-item"><div class="info-k">US113-115</div><div class="info-v">14 筆</div></div>
+    <div class="info-item"><div class="info-k">KR113-114</div><div class="info-v">6 筆</div></div>
+    <div class="info-item"><div class="info-k">MIX114</div><div class="info-v">2 筆</div></div>
   </div>
-  <div class="h-sub">
-    <span id="syn-txt">連線中...</span>
-    <span>· 台北/宜蘭共用 · 即時同步</span>
+  <div style="margin-bottom:14px;font-size:12px;color:#6B6B68">
+    將寫入 <strong>計數器</strong> 8 組 + <strong>115年取號記錄</strong> 33 筆至 Firebase
   </div>
+
+  <button class="btn" id="btn" onclick="doInit()">🚀 開始初始化</button>
+  <div class="log" id="log"></div>
 </div>
-
-<div class="nav">
-  <button class="nav-btn active" onclick="switchTab('new',this)">新增取號</button>
-  <button class="nav-btn" onclick="switchTab('history',this)">取號記錄</button>
-  <button class="nav-btn" onclick="switchTab('manage',this)">選項管理</button>
-</div>
-
-<!-- ══════════════ 新增取號 ══════════════ -->
-<div class="content">
-<div id="tab-new" class="tab-pane active">
-
-  <div class="toast" id="toast">
-    <div class="toast-num">
-      <span id="toast-num-text"></span>
-      <button class="copy-big-btn" id="toast-copy-btn" onclick="copyToast()">複製編號</button>
-    </div>
-    <div class="toast-msg">✓ 取號成功！已同步至 Firebase，台北/宜蘭皆可查詢</div>
-  </div>
-
-  <div class="preview-box">
-    <div class="preview-num" id="preview-num">?? · 115 · ???</div>
-    <div class="preview-label">編號預覽：國別2碼 + 民國年3碼 + 流水號3碼</div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">📝 基本資訊</div>
-
-    <div class="row2">
-      <div class="field">
-        <label>國別 <span class="req">*</span></label>
-        <select id="country" onchange="onCountryChange()">
-          <option value="">請選擇國別</option>
-          <option value="TW">TW ＿台灣</option>
-          <option value="US">US ＿美國</option>
-          <option value="KR">KR ＿韓國</option>
-          <option value="JP">JP ＿日本</option>
-          <option value="HK">HK ＿香港</option>
-        </select>
-        <div class="err-msg" id="err-country">請選擇國別</div>
-      </div>
-      <div class="field">
-        <label>項目 <span class="req">*</span></label>
-        <select id="category">
-          <option value="">請選擇項目</option>
-          <option value="樣品">樣品</option>
-          <option value="餅體">餅體</option>
-          <option value="成本試算">成本試算</option>
-          <option value="新品/成本試算">新品/成本試算</option>
-          <option value="系統認證">系統認證</option>
-          <option value="樣品/規格">樣品/規格</option>
-        </select>
-        <div class="err-msg" id="err-category">請選擇項目</div>
-      </div>
-    </div>
-
-    <div class="field">
-      <label>名稱 <span class="req">*</span>（必填）</label>
-      <input type="text" id="name" placeholder="例：好市多_松露米片_50克*8包">
-      <div class="err-msg" id="err-name">名稱為必填欄位</div>
-    </div>
-
-    <div class="field">
-      <label>敘述（選填）</label>
-      <textarea id="desc" placeholder="請輸入需求內容說明，如規格、數量、注意事項等（選填）"></textarea>
-    </div>
-  </div>
-
-  <div class="info-box" id="seq-info" style="display:none">
-    🔢 目前 <strong id="seq-country-label"></strong> 本年度已取到第 <strong id="seq-current"></strong> 號，本次將取得 <strong id="seq-next"></strong>
-  </div>
-
-  <button class="submit-btn" id="submit-btn" onclick="submitForm()" disabled>
-    🔢 立即取號（請先選擇國別）
-  </button>
-
-</div>
-
-<!-- ══════════════ 取號記錄 ══════════════ -->
-<div id="tab-history" class="tab-pane">
-
-  <div class="stats-row">
-    <div class="stat"><div class="stat-v" id="stat-total">—</div><div class="stat-l">總取號數</div></div>
-    <div class="stat"><div class="stat-v" id="stat-today">—</div><div class="stat-l">今日取號</div></div>
-    <div class="stat"><div class="stat-v" id="stat-year">—</div><div class="stat-l">本年度</div></div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">📋 取號記錄</div>
-    <div class="filter-row">
-      <select class="filter-select" id="filter-country" onchange="renderHistory()">
-        <option value="">全部國別</option>
-        <option value="TW">TW 台灣</option>
-        <option value="US">US 美國</option>
-        <option value="KR">KR 韓國</option>
-        <option value="JP">JP 日本</option>
-        <option value="HK">HK 香港</option>
-      </select>
-      <select class="filter-select" id="filter-year" onchange="renderHistory()">
-        <option value="">全部年度</option>
-        <option value="115">民國115年</option>
-        <option value="114">民國114年</option>
-        <option value="113">民國113年</option>
-      </select>
-    </div>
-    <div id="history-list"><div class="loading-box"><div class="loading-spinner"></div><div>載入中...</div></div></div>
-  </div>
-
-</div>
-
-<!-- ══════════════ 選項管理 ══════════════ -->
-<div id="tab-manage" class="tab-pane">
-
-  <div class="card">
-    <div class="card-title">🌏 新增國別選項</div>
-    <p style="font-size:12px;color:var(--muted);margin-bottom:10px">新增後會同步更新所有裝置的下拉選單</p>
-    <div class="add-opt-row">
-      <input class="add-opt-input" id="add-country-input" placeholder="輸入國別代碼，如 EU、MY" maxlength="6" style="text-transform:uppercase">
-      <input class="add-opt-input" id="add-country-label" placeholder="說明，如：歐洲、馬來西亞" maxlength="20">
-      <button class="add-opt-btn" onclick="addCustomCountry()">＋新增</button>
-    </div>
-    <div id="custom-country-list" style="margin-top:10px"></div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">📂 新增項目選項</div>
-    <p style="font-size:12px;color:var(--muted);margin-bottom:10px">新增後會同步更新所有裝置的下拉選單</p>
-    <div class="add-opt-row">
-      <input class="add-opt-input" id="add-cat-input" placeholder="輸入項目名稱，如：價格試算" maxlength="20">
-      <button class="add-opt-btn" onclick="addCustomCategory()">＋新增</button>
-    </div>
-    <div id="custom-cat-list" style="margin-top:10px"></div>
-  </div>
-
-</div>
-</div><!-- /content -->
 
 <script>
-// ── Firebase ─────────────────────────────────────────────────────────────────
 const FB = 'https://evaluation-survey-form-default-rtdb.firebaseio.com';
-const RECORDS_PATH  = 'prod_req/records';   // 每筆取號記錄
-const COUNTERS_PATH = 'prod_req/counters';  // {TW115: 61, US115: 3, ...}
-const OPTIONS_PATH  = 'prod_req/options';   // 自訂國別、項目選項
+const COUNTERS = {"TW113": 47, "KR113": 5, "US113": 5, "TW114": 61, "KR114": 1, "MIX114": 2, "US114": 6, "TW115": 30, "US115": 3};
+const RECORDS  = [{"num": "TW115001", "country": "TW", "year": "115", "seq": 1, "category": "樣品", "name": "2026年美國展", "date": "2026/01/01", "time": "00:00", "ts": 1700000001000, "desc": ""}, {"num": "TW115002", "country": "TW", "year": "115", "seq": 2, "category": "成本試算", "name": "全家_米花鹽味(纖維粉)", "date": "2026/01/01", "time": "00:00", "ts": 1700000002000, "desc": ""}, {"num": "TW115003", "country": "TW", "year": "115", "seq": 3, "category": "樣品", "name": "2026年美國展-1", "date": "2026/01/01", "time": "00:00", "ts": 1700000003000, "desc": ""}, {"num": "TW115004", "country": "TW", "year": "115", "seq": 4, "category": "樣品", "name": "虎航_10克米花", "date": "2026/01/01", "time": "00:00", "ts": 1700000004000, "desc": ""}, {"num": "TW115005", "country": "TW", "year": "115", "seq": 5, "category": "樣品", "name": "2026年美國展-2", "date": "2026/01/01", "time": "00:00", "ts": 1700000005000, "desc": ""}, {"num": "TW115006", "country": "TW", "year": "115", "seq": 6, "category": "樣品/規格", "name": "統一生機_米花散裝出貨", "date": "2026/01/01", "time": "00:00", "ts": 1700000006000, "desc": ""}, {"num": "TW115007", "country": "TW", "year": "115", "seq": 7, "category": "樣品", "name": "全家_FMC展示會(米片_海苔)", "date": "2026/01/01", "time": "00:00", "ts": 1700000007000, "desc": ""}, {"num": "TW115008", "country": "TW", "year": "115", "seq": 8, "category": "成本試算", "name": "虎航_10克米花", "date": "2026/01/01", "time": "00:00", "ts": 1700000008000, "desc": ""}, {"num": "TW115009", "country": "TW", "year": "115", "seq": 9, "category": "成本試算", "name": "山姆會員店300克米片", "date": "2026/01/01", "time": "00:00", "ts": 1700000009000, "desc": ""}, {"num": "TW115010", "country": "TW", "year": "115", "seq": 10, "category": "樣品", "name": "山姆會員店_薄脆米片", "date": "2026/01/01", "time": "00:00", "ts": 1700000010000, "desc": ""}, {"num": "TW115011", "country": "TW", "year": "115", "seq": 11, "category": "樣品", "name": "全聯提案_薄脆米片", "date": "2026/01/01", "time": "00:00", "ts": 1700000011000, "desc": ""}, {"num": "TW115012", "country": "TW", "year": "115", "seq": 12, "category": "成本試算", "name": "池上農會_米花、米片", "date": "2026/01/01", "time": "00:00", "ts": 1700000012000, "desc": ""}, {"num": "TW115013", "country": "TW", "year": "115", "seq": 13, "category": "樣品", "name": "里仁_米片_鹹蛋黃風味", "date": "2026/01/01", "time": "00:00", "ts": 1700000013000, "desc": ""}, {"num": "TW115014", "country": "TW", "year": "115", "seq": 14, "category": "樣品", "name": "通路提品_米片", "date": "2026/01/01", "time": "00:00", "ts": 1700000014000, "desc": ""}, {"num": "TW115015", "country": "TW", "year": "115", "seq": 15, "category": "樣品", "name": "里仁_米花_焦糖起司、焦糖奶油", "date": "2026/01/01", "time": "00:00", "ts": 1700000015000, "desc": ""}, {"num": "TW115016", "country": "TW", "year": "115", "seq": 16, "category": "樣品", "name": "里仁_米片_泰式酸辣", "date": "2026/01/01", "time": "00:00", "ts": 1700000016000, "desc": ""}, {"num": "TW115017", "country": "TW", "year": "115", "seq": 17, "category": "樣品", "name": "美國好市多", "date": "2026/01/01", "time": "00:00", "ts": 1700000017000, "desc": ""}, {"num": "TW115018", "country": "TW", "year": "115", "seq": 18, "category": "樣品", "name": "7-11提樣品", "date": "2026/01/01", "time": "00:00", "ts": 1700000018000, "desc": ""}, {"num": "TW115019", "country": "TW", "year": "115", "seq": 19, "category": "樣品", "name": "沙琪瑪_包裝袋測試", "date": "2026/01/01", "time": "00:00", "ts": 1700000019000, "desc": ""}, {"num": "TW115020", "country": "TW", "year": "115", "seq": 20, "category": "成本試算", "name": "高蛋白米片", "date": "2026/01/01", "time": "00:00", "ts": 1700000020000, "desc": ""}, {"num": "TW115021", "country": "TW", "year": "115", "seq": 21, "category": "樣品", "name": "2026年_泰國展", "date": "2026/01/01", "time": "00:00", "ts": 1700000021000, "desc": ""}, {"num": "TW115022", "country": "TW", "year": "115", "seq": 22, "category": "樣品", "name": "高蛋白米片_三個口味", "date": "2026/01/01", "time": "00:00", "ts": 1700000022000, "desc": ""}, {"num": "TW115023", "country": "TW", "year": "115", "seq": 23, "category": "樣品", "name": "DAISHO米片 DAISHO米米花", "date": "2026/01/01", "time": "00:00", "ts": 1700000023000, "desc": ""}, {"num": "TW115024", "country": "TW", "year": "115", "seq": 24, "category": "樣品", "name": "7-11米片提案", "date": "2026/01/01", "time": "00:00", "ts": 1700000024000, "desc": ""}, {"num": "TW115025", "country": "TW", "year": "115", "seq": 25, "category": "成本試算", "name": "好市多_高蛋白米片", "date": "2026/01/01", "time": "00:00", "ts": 1700000025000, "desc": ""}, {"num": "TW115026", "country": "TW", "year": "115", "seq": 26, "category": "成本試算", "name": "里仁_米花焦糖起司", "date": "2026/01/01", "time": "00:00", "ts": 1700000026000, "desc": ""}, {"num": "TW115027", "country": "TW", "year": "115", "seq": 27, "category": "樣品", "name": "Daisho米片聯名", "date": "2026/01/01", "time": "00:00", "ts": 1700000027000, "desc": ""}, {"num": "TW115028", "country": "TW", "year": "115", "seq": 28, "category": "樣品", "name": "2026年台北食品展_6月", "date": "2026/01/01", "time": "00:00", "ts": 1700000028000, "desc": ""}, {"num": "TW115029", "country": "TW", "year": "115", "seq": 29, "category": "樣品", "name": "薑麻園代工", "date": "2026/01/01", "time": "00:00", "ts": 1700000029000, "desc": ""}, {"num": "TW115030", "country": "TW", "year": "115", "seq": 30, "category": "樣品", "name": "星巴克_米片_35克", "date": "2026/01/01", "time": "00:00", "ts": 1700000030000, "desc": ""}, {"num": "US115001", "country": "US", "year": "115", "seq": 1, "category": "成本試算", "name": "美國好市多_300克米花", "date": "2026/01/01", "time": "00:00", "ts": 1700000031000, "desc": ""}, {"num": "US115002", "country": "US", "year": "115", "seq": 2, "category": "成本試算", "name": "美國好市多_60克*10包/彩箱 米花", "date": "2026/01/01", "time": "00:00", "ts": 1700000032000, "desc": ""}, {"num": "US115003", "country": "US", "year": "115", "seq": 3, "category": "成本試算", "name": "美國好市多_高蛋白米片 50克*8包/彩箱", "date": "2026/01/01", "time": "00:00", "ts": 1700000033000, "desc": ""}];
 
-async function fbGet(p) {
-  try {
-    const r = await fetch(`${FB}/${p}.json`);
-    if (!r.ok) return null;
-    return r.json();
-  } catch(e) { return null; }
-}
-async function fbSet(p, v) {
-  try {
-    await fetch(`${FB}/${p}.json`, {
-      method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(v)
-    });
-    return true;
-  } catch(e) { return false; }
-}
-async function fbPush(p, v) {
-  try {
-    const r = await fetch(`${FB}/${p}.json`, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(v)
-    });
-    return r.ok;
-  } catch(e) { return false; }
-}
-async function fbUpdate(p, v) {
-  try {
-    await fetch(`${FB}/${p}.json`, {
-      method: 'PATCH',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(v)
-    });
-    return true;
-  } catch(e) { return false; }
+function log(msg, cls) {
+  const el = document.getElementById('log');
+  el.style.display = 'block';
+  el.innerHTML += `<span class="${cls||''}">${msg}</span>\n`;
+  el.scrollTop = el.scrollHeight;
 }
 
-// ── State ─────────────────────────────────────────────────────────────────────
-let counters = {};  // {TW115: 61, US115: 3}
-let records  = [];  // all history records
-let options  = { countries: [], categories: [] };
-let currentTab = 'new';
-let lastToastNum = '';
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
-function getRocYear() {
-  return String(new Date().getFullYear() - 1911).padStart(3, '0');
+async function fbPut(path, data) {
+  const r = await fetch(`${FB}/${path}.json`, {
+    method: 'PUT',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(data)
+  });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
 }
-function makeKey(country, year) {
-  return country + year;  // e.g. "TW115"
-}
-function getCurrentSeq(country) {
-  const key = makeKey(country, getRocYear());
-  return counters[key] || 0;  // 0 means no records yet
-}
-function getNextSeq(country) {
-  return getCurrentSeq(country) + 1;
-}
-function formatNum(country, year, seq) {
-  return country + year + String(seq).padStart(3, '0');
+async function fbPost(path, data) {
+  const r = await fetch(`${FB}/${path}.json`, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(data)
+  });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
 }
 
-function setSyn(state) {
-  const dot = document.getElementById('syn-dot');
-  const txt = document.getElementById('syn-txt');
-  if (state === 'ok')  { dot.className = 'sync-dot';     txt.textContent = '已同步'; }
-  else if (state === 'sv') { dot.className = 'sync-dot off'; txt.textContent = '同步中...'; }
-  else                 { dot.className = 'sync-dot err'; txt.textContent = '同步失敗'; }
-}
-
-// ── Preview & seq info ────────────────────────────────────────────────────────
-function onCountryChange() {
-  updatePreview();
-  updateSeqInfo();
-  const c = document.getElementById('country').value;
-  const btn = document.getElementById('submit-btn');
-  btn.disabled = !c;
-  btn.textContent = c ? '🔢 立即取號' : '🔢 立即取號（請先選擇國別）';
-}
-
-function updatePreview() {
-  const c = document.getElementById('country').value;
-  const yr = getRocYear();
-  if (!c) {
-    document.getElementById('preview-num').textContent = '?? · ' + yr + ' · ???';
-    return;
-  }
-  const next = getNextSeq(c);
-  document.getElementById('preview-num').textContent =
-    c + ' · ' + yr + ' · ' + String(next).padStart(3, '0');
-}
-
-function updateSeqInfo() {
-  const c = document.getElementById('country').value;
-  const info = document.getElementById('seq-info');
-  if (!c) { info.style.display = 'none'; return; }
-  const yr = getRocYear();
-  const cur = getCurrentSeq(c);
-  const next = cur + 1;
-  document.getElementById('seq-country-label').textContent = c + yr;
-  document.getElementById('seq-current').textContent = cur > 0 ? formatNum(c, yr, cur) : '（尚無記錄）';
-  document.getElementById('seq-next').textContent = formatNum(c, yr, next);
-  info.style.display = 'block';
-}
-
-// ── Submit ────────────────────────────────────────────────────────────────────
-async function submitForm() {
-  const c   = document.getElementById('country').value;
-  const cat = document.getElementById('category').value;
-  const nm  = document.getElementById('name').value.trim();
-  const desc= document.getElementById('desc').value.trim();
-
-  // Validate
-  let ok = true;
-  document.getElementById('err-country').style.display  = !c   ? 'block' : 'none';
-  document.getElementById('err-category').style.display = !cat ? 'block' : 'none';
-  document.getElementById('err-name').style.display     = !nm  ? 'block' : 'none';
-  if (!c || !cat || !nm) return;
-
-  const btn = document.getElementById('submit-btn');
+async function doInit() {
+  const btn = document.getElementById('btn');
   btn.disabled = true;
-  btn.textContent = '取號中，請稍候...';
-  setSyn('sv');
+  btn.textContent = '初始化中...';
 
-  // ── 1. Re-fetch latest counter from Firebase to avoid collision ──────────
-  const freshCounters = await fbGet(COUNTERS_PATH);
-  if (freshCounters) counters = freshCounters;
-
-  const yr   = getRocYear();
-  const key  = makeKey(c, yr);
-  const seq  = (counters[key] || 0) + 1;
-  const num  = formatNum(c, yr, seq);
-
-  // ── 2. Update counter ────────────────────────────────────────────────────
-  counters[key] = seq;
-  const now = new Date();
-  const dateStr = now.toLocaleDateString('zh-TW', {year:'numeric',month:'2-digit',day:'2-digit'});
-  const timeStr = now.toLocaleTimeString('zh-TW', {hour:'2-digit',minute:'2-digit'});
-
-  const record = {
-    num, country: c, year: yr, seq,
-    category: cat, name: nm, desc,
-    date: dateStr, time: timeStr, ts: now.getTime()
-  };
-
-  // ── 3. Write to Firebase (counter + record, parallel) ───────────────────
-  const [c1, c2] = await Promise.all([
-    fbUpdate(COUNTERS_PATH, {[key]: seq}),
-    fbPush(RECORDS_PATH, record)
-  ]);
-
-  if (c1 && c2) {
-    setSyn('ok');
-  } else {
-    setSyn('err');
-  }
-
-  // Update local state
-  records.unshift(record);
-
-  // Show toast
-  lastToastNum = num;
-  document.getElementById('toast-num-text').textContent = num;
-  document.getElementById('toast').style.display = 'block';
-  setTimeout(() => document.getElementById('toast').style.display = 'none', 6000);
-
-  // Reset form
-  document.getElementById('country').value = '';
-  document.getElementById('category').value = '';
-  document.getElementById('name').value = '';
-  document.getElementById('desc').value = '';
-  document.getElementById('seq-info').style.display = 'none';
-  document.getElementById('preview-num').textContent = '?? · ' + yr + ' · ???';
-  btn.disabled = true;
-  btn.textContent = '🔢 立即取號（請先選擇國別）';
-}
-
-function copyToast() {
-  if (!lastToastNum) return;
-  navigator.clipboard.writeText(lastToastNum).then(() => {
-    const b = document.getElementById('toast-copy-btn');
-    b.textContent = '✓ 已複製';
-    setTimeout(() => b.textContent = '複製編號', 1500);
-  }).catch(() => alert('編號：' + lastToastNum));
-}
-
-// ── History ───────────────────────────────────────────────────────────────────
-function renderHistory() {
-  const fc = document.getElementById('filter-country').value;
-  const fy = document.getElementById('filter-year').value;
-  const yr = getRocYear();
-  const todayStr = new Date().toLocaleDateString('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit'});
-
-  let filtered = records;
-  if (fc) filtered = filtered.filter(r => r.country === fc);
-  if (fy) filtered = filtered.filter(r => r.year === fy);
-
-  const total   = records.length;
-  const today   = records.filter(r => r.date === todayStr).length;
-  const thisYr  = records.filter(r => r.year === yr).length;
-  document.getElementById('stat-total').textContent = total;
-  document.getElementById('stat-today').textContent = today;
-  document.getElementById('stat-year').textContent  = thisYr;
-
-  const list = document.getElementById('history-list');
-  if (!filtered.length) {
-    list.innerHTML = '<div class="empty">尚無取號記錄</div>';
-    return;
-  }
-
-  const rows = filtered.map(r => `
-    <tr>
-      <td>
-        <span class="num-badge">${r.num}</span>
-        <button class="copy-btn" onclick="copyNum('${r.num}',this)">複製</button>
-      </td>
-      <td><span class="cat-badge">${r.category}</span></td>
-      <td style="max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escHtml(r.name)}">${escHtml(r.name)}</td>
-      <td style="color:var(--muted);font-size:11px">${r.date}<br>${r.time}</td>
-    </tr>
-  `).join('');
-
-  list.innerHTML = `
-    <table class="history-table">
-      <thead><tr><th>編號</th><th>項目</th><th>名稱</th><th>時間</th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table>
-  `;
-}
-
-function copyNum(num, btn) {
-  navigator.clipboard.writeText(num).then(() => {
-    btn.textContent = '✓';
-    setTimeout(() => btn.textContent = '複製', 1500);
-  }).catch(() => alert('編號：' + num));
-}
-
-function escHtml(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-// ── Options management ────────────────────────────────────────────────────────
-function renderManageTab() {
-  renderCustomCountryList();
-  renderCustomCatList();
-}
-
-function renderCustomCountryList() {
-  const el = document.getElementById('custom-country-list');
-  if (!options.countries.length) { el.innerHTML = '<p style="font-size:12px;color:var(--hint)">尚無自訂國別</p>'; return; }
-  el.innerHTML = options.countries.map(c =>
-    `<span style="display:inline-flex;align-items:center;gap:4px;background:var(--accent-l);color:var(--accent-t);font-size:12px;padding:3px 8px;border-radius:20px;margin:2px">
-      ${c.code} ${c.label}
-    </span>`
-  ).join('');
-}
-
-function renderCustomCatList() {
-  const el = document.getElementById('custom-cat-list');
-  if (!options.categories.length) { el.innerHTML = '<p style="font-size:12px;color:var(--hint)">尚無自訂項目</p>'; return; }
-  el.innerHTML = options.categories.map(c =>
-    `<span style="display:inline-flex;align-items:center;gap:4px;background:var(--blue-l);color:var(--blue);font-size:12px;padding:3px 8px;border-radius:20px;margin:2px">
-      ${c}
-    </span>`
-  ).join('');
-}
-
-async function addCustomCountry() {
-  const code  = document.getElementById('add-country-input').value.trim().toUpperCase();
-  const label = document.getElementById('add-country-label').value.trim();
-  if (!code) { alert('請輸入國別代碼'); return; }
-
-  // Check duplicate
-  const sel = document.getElementById('country');
-  for (let i = 0; i < sel.options.length; i++) {
-    if (sel.options[i].value === code) { alert('此國別代碼已存在'); return; }
-  }
-
-  options.countries.push({ code, label });
-  setSyn('sv');
-  await fbSet(OPTIONS_PATH + '/countries', options.countries);
-  setSyn('ok');
-
-  appendCountryOption(code, label);
-  renderCustomCountryList();
-  document.getElementById('add-country-input').value = '';
-  document.getElementById('add-country-label').value = '';
-  // Also update filter select
-  appendCountryFilter(code, label);
-}
-
-async function addCustomCategory() {
-  const val = document.getElementById('add-cat-input').value.trim();
-  if (!val) { alert('請輸入項目名稱'); return; }
-  const sel = document.getElementById('category');
-  for (let i = 0; i < sel.options.length; i++) {
-    if (sel.options[i].value === val) { alert('此項目已存在'); return; }
-  }
-  options.categories.push(val);
-  setSyn('sv');
-  await fbSet(OPTIONS_PATH + '/categories', options.categories);
-  setSyn('ok');
-  appendCategoryOption(val);
-  renderCustomCatList();
-  document.getElementById('add-cat-input').value = '';
-}
-
-function appendCountryOption(code, label) {
-  const sel = document.getElementById('country');
-  const opt = document.createElement('option');
-  opt.value = code;
-  opt.textContent = code + (label ? ' ＿' + label : ' ＿(自訂)');
-  sel.appendChild(opt);
-}
-function appendCountryFilter(code, label) {
-  const sel = document.getElementById('filter-country');
-  const opt = document.createElement('option');
-  opt.value = code;
-  opt.textContent = code + (label ? ' ' + label : '');
-  sel.appendChild(opt);
-}
-function appendCategoryOption(val) {
-  const sel = document.getElementById('category');
-  const opt = document.createElement('option');
-  opt.value = val;
-  opt.textContent = val;
-  sel.appendChild(opt);
-}
-
-// ── Tab switching ─────────────────────────────────────────────────────────────
-function switchTab(tab, btn) {
-  document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + tab).classList.add('active');
-  btn.classList.add('active');
-  currentTab = tab;
-  if (tab === 'history') renderHistory();
-  if (tab === 'manage')  renderManageTab();
-}
-
-// ── Init ──────────────────────────────────────────────────────────────────────
-async function init() {
-  setSyn('sv');
   try {
-    const [rawCounters, rawRecords, rawOptions] = await Promise.all([
-      fbGet(COUNTERS_PATH),
-      fbGet(RECORDS_PATH),
-      fbGet(OPTIONS_PATH)
-    ]);
+    // Step 1: Write counters
+    log('① 寫入計數器（各國別/年度最高流水號）...', 'info');
+    await fbPut('prod_req/counters', COUNTERS);
+    log('   ✓ 計數器寫入完成', 'ok');
+    Object.entries(COUNTERS).forEach(([k,v]) => log(`   ${k} → 最高 ${String(v).padStart(3,'0')} 號`));
 
-    // Counters: {TW115: 61, US115: 3, ...}
-    counters = rawCounters && typeof rawCounters === 'object' ? rawCounters : {};
-
-    // Records: Firebase push returns object with random keys
-    if (rawRecords && typeof rawRecords === 'object') {
-      records = Object.values(rawRecords).sort((a, b) => (b.ts||0) - (a.ts||0));
+    // Step 2: Write records one by one
+    log('\n② 寫入 115年取號記錄（33筆）...', 'info');
+    for (let i = 0; i < RECORDS.length; i++) {
+      const r = RECORDS[i];
+      await fbPost('prod_req/records', r);
+      log(`   ✓ ${r.num} ${r.name}`, 'ok');
     }
 
-    // Options
-    if (rawOptions) {
-      options.countries  = Array.isArray(rawOptions.countries)  ? rawOptions.countries  : [];
-      options.categories = Array.isArray(rawOptions.categories) ? rawOptions.categories : [];
-    }
-    // Apply custom options to selects
-    options.countries.forEach(c => {
-      appendCountryOption(c.code, c.label);
-      appendCountryFilter(c.code, c.label);
-    });
-    options.categories.forEach(v => appendCategoryOption(v));
-
-    setSyn('ok');
+    log('\n✅ 初始化完成！請關閉此頁面，開啟取號系統即可看到記錄。', 'ok');
+    btn.textContent = '✅ 初始化完成';
+    btn.style.background = '#2D5A3D';
   } catch(e) {
-    setSyn('err');
-    console.error(e);
+    log(`\n❌ 錯誤：${e.message}`, 'err');
+    log('請確認 Firebase 規則允許寫入，或聯絡管理員', 'err');
+    btn.disabled = false;
+    btn.textContent = '重新嘗試';
   }
-  updatePreview();
 }
-
-init();
 </script>
 </body>
 </html>
