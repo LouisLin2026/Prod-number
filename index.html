@@ -1048,7 +1048,7 @@ function renderProj(){
         <div class="stat" style="padding:6px 8px"><div class="stat-v" style="font-size:18px;color:var(--muted)">${counts.other}</div><div class="stat-l">其他</div></div>
       </div>
 
-      <div style="display:flex;gap:6px;flex-wrap:wrap;padding-bottom:10px">
+      <div style="display:flex;gap:6px;flex-wrap:wrap;padding-bottom:10px;align-items:center">
         <select class="filter-select" id="proj-fc" onchange="renderProj()">
           <option value="">全部國別</option>
           <option value="TW">TW</option><option value="US">US</option>
@@ -1060,6 +1060,7 @@ function renderProj(){
           ${STATUS_OPTS.map(s=>`<option value="${s}">${s}</option>`).join('')}
         </select>
         <span style="font-size:12px;color:var(--muted);align-self:center">顯示 ${shown.length} 筆</span>
+        <button onclick="downloadExcelYear('${projYear}')" style="margin-left:auto;padding:6px 14px;border:1px solid var(--accent);border-radius:var(--radius-s);background:var(--accent-l);color:var(--accent-t);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">📥 下載控管表</button>
       </div>
     </div>
 
@@ -1161,25 +1162,26 @@ async function savePCard(num){
 
 // ── Admin: Export Excel ───────────────────────────────────────────────────────
 function renderAdmExport(){
-  const yr=getRocYear();
-  const count115=S.records.filter(r=>r.year===yr).length;
+  const years=getYears();
+  const yrBtns=years.map(y=>`
+    <button onclick="downloadExcelYear('${y}')"
+      style="padding:10px 16px;border:1px solid var(--border-s);border-radius:var(--radius-s);background:var(--bg);font-family:inherit;font-size:13px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:90px">
+      <span style="font-weight:700;color:var(--accent)">${parseInt(y)+1911}年</span>
+      <span style="font-size:10px;color:var(--muted)">民國${y}年</span>
+      <span style="font-size:11px;color:var(--muted)">${S.records.filter(r=>r.year===y).length} 筆</span>
+    </button>`).join('');
   document.getElementById('main-content').innerHTML=`
     <div class="card">
       <div class="card-title">📥 下載研發專案控管表</div>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.7">
-        從 Firebase 讀取所有取號記錄及專案狀態，產出格式與現行控管表完全一致的 Excel 檔案。<br>
-        <strong>目前 ${yr} 年度共 ${count115} 筆記錄。</strong>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.7">
+        從 Firebase 讀取取號記錄及最新專案狀態，產出 Excel 控管表。<br>
+        包含：專案總表（編號、項目、名稱、進度、負責人、狀態…）＋ 統計總覽
       </p>
-      <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-s);padding:12px;font-size:12px;margin-bottom:14px">
-        <div style="font-weight:700;color:var(--accent);margin-bottom:8px">下載內容包含：</div>
-        <div style="display:flex;flex-direction:column;gap:4px">
-          <span>📋 <strong>2026年專案總表</strong>：編號、項目、名稱、需求內容、進度、上市日、負責人、狀態、備註</span>
-          <span>📊 <strong>統計總覽</strong>：各國別狀態統計</span>
-        </div>
-      </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px">選擇年度下載</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">${yrBtns}</div>
+      <div style="border-top:1px solid var(--border);padding-top:12px;display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn-p" id="dl-btn" onclick="downloadExcel()" style="flex:1;min-width:140px">
-          📥 下載最新控管表
+          📥 下載本年度（${parseInt(getRocYear())+1911}年）
         </button>
         <button class="btn-s" onclick="refreshAndExport()">🔄 重新讀取後下載</button>
       </div>
@@ -1195,100 +1197,83 @@ async function refreshAndExport(){
   setTimeout(()=>downloadExcel(),200);
 }
 
+async function downloadExcelYear(yr){
+  yr=yr||getRocYear();
+  const rawP=await fbGet(P_PROJ);
+  if(rawP&&typeof rawP==='object') S.projDetails={...rawP};
+  const adYear=parseInt(yr)+1911;
+  const records=S.records.filter(r=>r.year===yr)
+    .sort((a,b)=>a.seq-b.seq||a.country.localeCompare(b.country));
+  if(!records.length){alert(adYear+'年度尚無取號記錄');return;}
+  const wb=XLSX.utils.book_new();
+
+  // ── Sheet1: 年度專案總表 ──
+  const sheetTitle=adYear+'年度產品專案控管表';
+  const headers=['項次','產品開發\n需求單編號','項目','名稱','取號人','需求內容','目前進度說明','預計上市日','負責人','結案/暫緩','狀態','備註','國別'];
+  const dataRows=records.map((r,i)=>{
+    const d=S.projDetails[r.num]||{};
+    const cleanProg=(d.progress||'').split('\n').filter(Boolean)
+      .map(l=>l.replace(/^\d+\.\S+\s/,'').trim()).join('\n');
+    return [i+1,r.num,r.category,r.name,r.requester||'',r.desc||'',
+      cleanProg,d.launch||'',d.owner||'',d.status||'',d.status||'',d.note||'',r.country];
+  });
+  const ws1=XLSX.utils.aoa_to_sheet([[sheetTitle,...Array(12).fill('')],headers,...dataRows]);
+  ws1['!cols']=[{wch:6},{wch:12},{wch:12},{wch:30},{wch:8},{wch:36},{wch:44},{wch:10},{wch:8},{wch:10},{wch:10},{wch:12},{wch:6}];
+  ws1['!rows']=[{hpt:24},{hpt:52},...records.map(()=>({hpt:60}))];
+  ws1['!merges']=[{s:{r:0,c:0},e:{r:0,c:12}}];
+
+  // 套用儲存格樣式
+  const range=XLSX.utils.decode_range(ws1['!ref']);
+  for(let R=range.s.r;R<=range.e.r;R++){
+    for(let C=range.s.c;C<=range.e.c;C++){
+      const addr=XLSX.utils.encode_cell({r:R,c:C});
+      if(!ws1[addr])ws1[addr]={t:'s',v:''};
+      const isTitle=R===0,isHeader=R===1,isEven=R>1&&R%2===0;
+      ws1[addr].s={
+        font:{name:'微軟正黑體',sz:isTitle?14:11,bold:isTitle||isHeader,color:{rgb:isTitle?'FFFFFF':'000000'}},
+        fill:{fgColor:{rgb:isTitle?'1F3864':isHeader?'B8CCE4':isEven?'EEF2F8':'FFFFFF'},patternType:'solid'},
+        alignment:{wrapText:true,vertical:'top',horizontal:isTitle?'center':C===0?'center':'left'},
+        border:{top:{style:'thin',color:{rgb:'C8C5BE'}},bottom:{style:'thin',color:{rgb:'C8C5BE'}},left:{style:'thin',color:{rgb:'C8C5BE'}},right:{style:'thin',color:{rgb:'C8C5BE'}}}
+      };
+    }
+  }
+  XLSX.utils.book_append_sheet(wb,ws1,adYear+'年專案總表');
+
+  // ── Sheet2: 統計總覽 ──
+  const countries=['TW','US','KR','JP','HK',...S.options.countries.map(c=>c.code)];
+  const statusList=['進行中','尚未開始','已完成','已上市','不執行','結案','持續','暫緩','待確認'];
+  const statMap={};
+  records.forEach(r=>{
+    const d=S.projDetails[r.num]||{};
+    const c=r.country,st=d.status||'（未設定）';
+    if(!statMap[c])statMap[c]={};
+    statMap[c][st]=(statMap[c][st]||0)+1;
+  });
+  const statsHeader=['國別',...statusList,'（未設定）','總計'];
+  const statsRows=countries.filter(c=>statMap[c]).map(c=>{
+    const m=statMap[c]||{};
+    const known=statusList.reduce((s,st)=>s+(m[st]||0),0);
+    const all=Object.values(m).reduce((s,v)=>s+v,0);
+    return [c,...statusList.map(st=>m[st]||0),all-known,all];
+  });
+  const unset=records.filter(r=>!S.projDetails[r.num]?.status).length;
+  const totalRow=['合計',...statusList.map(st=>records.filter(r=>(S.projDetails[r.num]?.status||'')===st).length),unset,records.length];
+  const ws2=XLSX.utils.aoa_to_sheet([[adYear+'年度 各國別專案狀態統計',...Array(statsHeader.length-1).fill('')],statsHeader,...statsRows,totalRow]);
+  ws2['!merges']=[{s:{r:0,c:0},e:{r:0,c:statsHeader.length-1}}];
+  ws2['!cols']=[{wch:8},...Array(statusList.length+3).fill({wch:9})];
+  XLSX.utils.book_append_sheet(wb,ws2,'統計總覽');
+
+  const dateStr=new Date().toLocaleDateString('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit'}).replace(/\//g,'');
+  XLSX.writeFile(wb,'研發專案控管表_'+adYear+'_'+dateStr+'.xlsx');
+}
+
 async function downloadExcel(){
   const btn=document.getElementById('dl-btn');
   const msg=document.getElementById('export-msg');
   if(btn){btn.disabled=true;btn.textContent='產生中...';}
   if(msg){msg.style.display='block';msg.style.color='var(--amber)';msg.textContent='⏳ 正在產生 Excel 檔案...';}
-
-  // Reload proj details fresh
-  const rawP=await fbGet(P_PROJ);
-  if(rawP&&typeof rawP==='object') S.projDetails={...rawP};
-
   try{
-    const yr=getRocYear();
-    const records=S.records.filter(r=>r.year===yr).sort((a,b)=>a.seq-b.seq||a.country.localeCompare(b.country));
-
-    // Build workbook using SheetJS
-    const wb=XLSX.utils.book_new();
-
-    // ── Sheet1: 2026年專案總表 ──
-    const title=yr==='115'?'2026年度產品專案控管表':`${parseInt(yr)+1911}年度產品專案控管表`;
-    const headers=['項次','產品開發\n需求單編號','項目','名稱','取號人','需求內容','目前進度說明','預計上市日','負責人','結案/暫緩','狀態','備註','國別'];
-    const dataRows=records.map((r,i)=>{
-      const d=S.projDetails[r.num]||{};
-      return [
-        i+1,
-        r.num,
-        r.category,
-        r.name,
-        r.requester||'',
-        r.desc||'',
-        d.progress||'',
-        d.launch||'',
-        d.owner||'',
-        d.status||'',
-        d.status||'',
-        d.note||'',
-        r.country
-      ];
-    });
-
-    const ws1Data=[[title,'','','','','','','','','','','',''],headers,...dataRows];
-    const ws1=XLSX.utils.aoa_to_sheet(ws1Data);
-
-    // Merge title row A1:F1
-    ws1['!merges']=[{s:{r:0,c:0},e:{r:0,c:5}}];
-
-    // Column widths (match original)
-    ws1['!cols']=[
-      {wch:9},{wch:12},{wch:15},{wch:34},{wch:10},{wch:38},
-      {wch:46},{wch:10},{wch:10},{wch:10},{wch:10},{wch:12},{wch:8}
-    ];
-
-    // Row heights
-    ws1['!rows']=[{hpt:25},{hpt:56},...records.map(()=>({hpt:45}))];
-
-    XLSX.utils.book_append_sheet(wb,ws1,`${parseInt(yr)+1911}年專案總表`);
-
-    // ── Sheet2: 統計總覽 ──
-    const countries=['TW','US','KR','JP','HK',...S.options.countries.map(c=>c.code)];
-    const statusList=['已上市','已完成','不執行','持續','結案','暫緩','待確認'];
-    const statMap={};
-    records.forEach(r=>{
-      const d=S.projDetails[r.num]||{};
-      const c=r.country;const st=d.status||'';
-      if(!statMap[c])statMap[c]={};
-      statMap[c][st]=(statMap[c][st]||0)+1;
-    });
-
-    const statsHeader=['國別',...statusList,'其他','總計'];
-    const statsRows=countries.filter(c=>statMap[c]).map(c=>{
-      const m=statMap[c]||{};
-      const knownTotal=statusList.reduce((s,st)=>s+(m[st]||0),0);
-      const allTotal=Object.values(m).reduce((s,v)=>s+v,0);
-      const other=allTotal-knownTotal;
-      return [c,...statusList.map(st=>m[st]||0),other,allTotal];
-    });
-    const allTotal=records.length;
-    const totalRow=['總計',...statusList.map(st=>records.filter(r=>{const d=S.projDetails[r.num]||{};return d.status===st;}).length),0,allTotal];
-    totalRow[totalRow.length-2]=allTotal-statusList.reduce((s,v)=>s+v,0); // fix other
-
-    const ws2Data=[
-      [`${parseInt(yr)+1911}年度 各國別專案狀態統計`,...Array(statsHeader.length-1).fill('')],
-      statsHeader,
-      ...statsRows,
-      totalRow
-    ];
-    const ws2=XLSX.utils.aoa_to_sheet(ws2Data);
-    ws2['!merges']=[{s:{r:0,c:0},e:{r:0,c:statsHeader.length-1}}];
-    ws2['!cols']=[{wch:8},...Array(statusList.length+2).fill({wch:10})];
-    XLSX.utils.book_append_sheet(wb,ws2,'統計總覽');
-
-    // Download
-    const dateStr=new Date().toLocaleDateString('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit'}).replace(/\//g,'');
-    XLSX.writeFile(wb,`研發專案控管表-${dateStr}.xlsx`);
-
+    await downloadExcelYear(getRocYear());
     if(msg){msg.style.color='var(--green)';msg.textContent='✅ 下載完成！';}
   }catch(e){
     if(msg){msg.style.color='var(--red)';msg.textContent='❌ 產生失敗：'+e.message;}
@@ -1297,6 +1282,7 @@ async function downloadExcel(){
     if(btn){btn.disabled=false;btn.textContent='📥 下載最新控管表';}
   }
 }
+
 
 // ── Boot：直接顯示取號畫面，Firebase 背景載入 ─────────────────────────────────
 render();
