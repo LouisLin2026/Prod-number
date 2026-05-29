@@ -455,8 +455,15 @@ function renderNew(){
         <div class="err-msg" id="err-requester">取號人為必填欄位</div>
       </div>
       <div class="field">
-        <label>敘述（選填）</label>
-        <textarea id="inp-desc" placeholder="需求內容說明，如規格、數量、注意事項等（選填）"></textarea>
+        <label>期望完成日 <span class="req">*</span></label>
+        <input type="date" id="inp-duedate" style="color:var(--text)">
+        <div class="err-msg" id="err-duedate">請選擇期望完成日</div>
+        <div style="font-size:11px;color:var(--hint);margin-top:3px">取號後會自動帶入專案的預計完成日，之後可在專案控管頁修改</div>
+      </div>
+      <div class="field">
+        <label>需求內容 <span class="req">*</span></label>
+        <textarea id="inp-desc" placeholder="請輸入需求內容，如規格、數量、口味、包裝等"></textarea>
+        <div class="err-msg" id="err-desc">需求內容為必填欄位</div>
       </div>
     </div>
     <div class="info-box" id="seq-info" style="display:none">
@@ -488,11 +495,16 @@ async function submitForm(){
   const nm=document.getElementById('inp-name').value.trim();
   const requester=document.getElementById('inp-requester').value.trim();
   const desc=document.getElementById('inp-desc').value.trim();
+  const duedateRaw=document.getElementById('inp-duedate').value; // yyyy-mm-dd
+  // 轉成 yyyy/mm/dd 格式
+  const duedate=duedateRaw?duedateRaw.replace(/-/g,'/'):'';
   document.getElementById('err-country').style.display=!c?'block':'none';
   document.getElementById('err-category').style.display=!cat?'block':'none';
   document.getElementById('err-name').style.display=!nm?'block':'none';
   document.getElementById('err-requester').style.display=!requester?'block':'none';
-  if(!c||!cat||!nm||!requester)return;
+  document.getElementById('err-duedate').style.display=!duedate?'block':'none';
+  document.getElementById('err-desc').style.display=!desc?'block':'none';
+  if(!c||!cat||!nm||!requester||!duedate||!desc)return;
 
   const btn=document.getElementById('submit-btn');
   btn.disabled=true;btn.textContent='取號中，請稍候...';
@@ -519,15 +531,49 @@ async function submitForm(){
   setSyn(ok1&&ok2?'ok':'err');
   S.records.unshift(record);
   S.lastToastNum=num;
+  // 初始化新記錄的 projDetails（預設進行中）
+  // 初始化新記錄的 projDetails，帶入期望完成日
+  if(!S.projDetails[num]) S.projDetails[num]={status:'',owner:'',launch:duedate,progress:'',note:'',reqContent:desc};
+  // 若 duedate 有填，同步寫入 Firebase proj_details
+  if(duedate||desc){
+    await fbPatch(P_PROJ+'/'+num,{launch:duedate,reqContent:desc});
+  }
 
   renderNew();
   setTimeout(()=>{
     const t=document.getElementById('toast');
     const tn=document.getElementById('toast-num-text');
-    if(t&&tn){tn.textContent=num;t.style.display='block';}
-    setTimeout(()=>{const t2=document.getElementById('toast');if(t2)t2.style.display='none';},6000);
+    if(t&&tn){
+      tn.textContent=num;
+      t.style.display='block';
+      // 加入「前往專案控管」按鈕
+      const existing=t.querySelector('.go-proj-btn');
+      if(!existing){
+        const goBtn=document.createElement('button');
+        goBtn.className='go-proj-btn';
+        goBtn.textContent='📋 前往專案控管';
+        goBtn.style.cssText='font-size:12px;padding:4px 10px;border:1px solid var(--green);border-radius:var(--radius-s);background:#fff;cursor:pointer;color:var(--green);font-family:inherit;margin-left:8px;flex-shrink:0';
+        goBtn.onclick=()=>{
+          t.style.display='none';
+          S.tab='proj';
+          projYear=getRocYear();
+          projQuarter=0;projCat='';projStatusFilter='';
+          render();
+          scrollTo(0,0);
+          // 展開並滾到新記錄
+          setTimeout(()=>{
+            const card=document.getElementById('pc-'+num);
+            if(card){card.scrollIntoView({behavior:'smooth',block:'center'});}
+          },300);
+        };
+        const numEl=t.querySelector('.toast-num');
+        if(numEl) numEl.appendChild(goBtn);
+      }
+    }
+    setTimeout(()=>{const t2=document.getElementById('toast');if(t2)t2.style.display='none';},10000);
   },0);
 }
+
 
 function copyToast(){
   const num=S.lastToastNum;if(!num)return;
@@ -1041,7 +1087,7 @@ function renderProj(){
   <div class="pcard-body" id="pcb-${r.num}">
     <div class="pfi">
       <div class="pfi-row"><span class="pfi-label">負責人</span><span class="pfi-val">${escH(d.owner||'—')}</span></div>
-      <div class="pfi-row"><span class="pfi-label">預計上市</span><span class="pfi-val">${escH(d.launch||'—')}</span></div>
+      <div class="pfi-row"><span class="pfi-label">預計完成日</span><span class="pfi-val">${escH(d.launch||'—')}</span></div>
       <div class="pfi-row"><span class="pfi-label">需求內容</span><span class="pfi-val" style="white-space:pre-wrap">${escH(d.reqContent||r.desc||'—')}</span></div>
       <div class="pfi-row" style="margin-top:4px"><span class="pfi-label" style="color:var(--accent-t);font-weight:600">進度記錄</span><span></span></div>
       <div class="pupd-box" id="puf-${r.num}">${
@@ -1063,7 +1109,7 @@ function renderProj(){
         <input type="text" id="peo-${r.num}" value="${escH(d.owner||'')}" placeholder="填入負責人姓名">
       </div>
       <div class="pedit-row"><span class="pedit-label">預計上市</span>
-        <input type="text" id="pel-${r.num}" value="${escH(d.launch||'')}" placeholder="例：2026/08">
+        <input type="text" id="pel-${r.num}" value="${escH(d.launch||'')}" placeholder="例：2026/08/31">
       </div>
       <div class="pedit-row" style="align-items:flex-start"><span class="pedit-label" style="margin-top:5px">進度說明</span>
         <div style="flex:1">
@@ -1326,7 +1372,7 @@ async function downloadExcelYear(yr){
 
   // ── Sheet1: 年度專案總表 ──
   const sheetTitle=adYear+'年度產品專案控管表';
-  const headers=['項次','產品開發\n需求單編號','項目','名稱','取號人','需求內容','目前進度說明','預計上市日','負責人','結案/暫緩','狀態','備註','國別'];
+  const headers=['項次','產品開發\n需求單編號','項目','名稱','取號人','需求內容','目前進度說明','期望完成日','負責人','結案/暫緩','狀態','備註','國別'];
   const dataRows=records.map((r,i)=>{
     const d=S.projDetails[r.num]||{};
     const cleanProg=(d.progress||'').split('\n').filter(Boolean)
