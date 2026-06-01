@@ -14,6 +14,7 @@
   --amber:#B8690A;--amber-l:#FEF3E2;
   --red:#C0392B;--red-l:#FBEAE8;
   --blue:#0369A1;--blue-l:#EFF8FF;
+  --purple:#7C3AED;--purple-l:#F5F3FF;
   --radius:10px;--radius-s:6px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -24,48 +25,19 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .h-left{display:flex;flex-direction:column;gap:2px}
 .h-title{font-size:16px;font-weight:700;display:flex;align-items:center;gap:7px}
 .h-sub{font-size:11px;opacity:.75;display:flex;align-items:center;gap:5px}
-.sync-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;flex-shrink:0;transition:background .3s}
-.sync-dot.off{background:#fbbf24}.sync-dot.err{background:#f87171}
-
-/* hamburger */
+.sync-dot{width:7px;height:7px;border-radius:50%;background:#fbbf24;flex-shrink:0;transition:background .3s}
+.sync-dot.ok{background:#4ade80}.sync-dot.err{background:#f87171}
+.ai-dot{width:7px;height:7px;border-radius:50%;background:#a78bfa;flex-shrink:0;transition:all .3s}
+.ai-dot.thinking{animation:ai-pulse 1s ease-in-out infinite}
+.ai-dot.done{background:#4ade80}.ai-dot.err{background:#f87171}
+@keyframes ai-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.5)}}
 .menu-btn{width:36px;height:36px;border:none;background:rgba(255,255,255,.15);border-radius:var(--radius-s);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;flex-shrink:0}
-.menu-btn span{display:block;width:18px;height:2px;background:#fff;border-radius:2px;transition:all .2s}
+.menu-btn span{display:block;width:18px;height:2px;background:#fff;border-radius:2px}
 
-/* ── Slide-in menu overlay ── */
-.menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:flex-start;justify-content:flex-end}
-.menu-overlay.open{display:flex}
-.menu-panel{background:var(--surface);width:240px;min-height:100vh;padding:0;box-shadow:-4px 0 20px rgba(0,0,0,.15);display:flex;flex-direction:column}
-.menu-header{background:var(--accent);color:#fff;padding:14px 16px;display:flex;align-items:center;justify-content:space-between}
-.menu-header-title{font-size:14px;font-weight:700}
-.menu-close{width:30px;height:30px;border:none;background:rgba(255,255,255,.2);border-radius:var(--radius-s);cursor:pointer;color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center}
-.menu-body{padding:16px;flex:1}
-.menu-section{margin-bottom:20px}
-.menu-section-title{font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--hint);text-transform:uppercase;margin-bottom:8px}
-.menu-item{display:block;width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-s);background:var(--bg);font-family:inherit;font-size:13px;color:var(--text);cursor:pointer;text-align:left;margin-bottom:6px}
-.menu-item:hover{background:var(--accent-l);border-color:var(--accent);color:var(--accent-t)}
-.menu-item.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-
-/* PIN overlay */
-.pin-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;display:none;align-items:center;justify-content:center;padding:20px}
-.pin-overlay.open{display:flex}
-.pin-box{background:var(--surface);border-radius:var(--radius);padding:28px 24px;width:100%;max-width:300px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.18)}
-.pin-icon{width:56px;height:56px;background:var(--accent-l);border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:24px}
-.pin-title{font-size:16px;font-weight:700;color:var(--accent);margin-bottom:4px}
-.pin-sub{font-size:12px;color:var(--muted);margin-bottom:18px}
-.pin-input{width:100%;padding:13px;text-align:center;font-size:24px;letter-spacing:.4em;border:1px solid var(--border-s);border-radius:var(--radius-s);font-family:inherit;background:var(--bg);color:var(--text);outline:none;margin-bottom:8px}
-.pin-input:focus{border-color:var(--accent);background:#fff}
-.pin-err{font-size:12px;color:var(--red);min-height:18px;margin-bottom:8px}
-.pin-row{display:flex;gap:8px}
-.pin-ok{flex:1;padding:10px;border:none;border-radius:var(--radius-s);background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer}
-.pin-cancel{padding:10px 16px;border:1px solid var(--border-s);border-radius:var(--radius-s);background:#fff;cursor:pointer;color:var(--muted);font-family:inherit;font-size:13px}
-
-/* ── User nav ── */
+/* ── Nav ── */
 .nav{display:flex;background:var(--surface);border-bottom:1px solid var(--border)}
 .nav-btn{flex:1;padding:10px 6px 8px;border:none;background:none;font-family:inherit;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent}
 .nav-btn.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700}
-.nav-btn.red{color:var(--red)}
-
-/* ── Admin bar ── */
 .admin-bar{background:var(--red-l);border-bottom:2px solid var(--red);padding:7px 16px;display:none;align-items:center;justify-content:space-between}
 .admin-bar.show{display:flex}
 .admin-bar-label{font-size:12px;font-weight:700;color:var(--red)}
@@ -73,55 +45,32 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 
 /* ── Content ── */
 .content{padding:14px;max-width:480px;margin:0 auto}
-
-/* Card */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
 .card-title{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:12px;display:flex;align-items:center;gap:6px}
-
-/* Fields */
 .field{margin-bottom:10px}
 .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:500}
 .req{color:var(--red);margin-left:2px}
-.field input,.field select,.field textarea{width:100%;padding:8px 10px;border:1px solid var(--border-s);border-radius:var(--radius-s);font-family:inherit;font-size:13px;background:var(--bg);color:var(--text);outline:none}
+.field input,.field select,.field textarea{width:100%;padding:8px 10px;border:1px solid var(--border-s);border-radius:var(--radius-s);font-family:inherit;font-size:13px;background:var(--bg);color:var(--text);outline:none;transition:border-color .2s}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);background:#fff}
 .field textarea{resize:vertical;min-height:60px}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .err-msg{color:var(--red);font-size:11px;margin-top:3px;display:none}
-
-/* Add option row */
-.add-opt-row{display:flex;gap:6px;margin-top:5px}
-.add-opt-input{flex:1;padding:6px 8px;border:1px solid var(--border-s);border-radius:var(--radius-s);font-family:inherit;font-size:12px;background:var(--bg);color:var(--text);outline:none}
-.add-opt-input:focus{border-color:var(--blue)}
-.add-opt-btn{padding:6px 10px;border:1px solid var(--blue);border-radius:var(--radius-s);background:var(--blue-l);color:var(--blue);font-family:inherit;font-size:12px;cursor:pointer;font-weight:500;white-space:nowrap}
-
-/* Preview */
 .preview-box{background:var(--accent-l);border:1px solid #C8D8F0;border-radius:var(--radius-s);padding:12px 14px;text-align:center;margin-bottom:12px}
 .preview-num{font-size:26px;font-weight:700;color:var(--accent);letter-spacing:2px;font-family:monospace}
 .preview-label{font-size:11px;color:var(--muted);margin-top:3px}
-
-/* Info box */
 .info-box{background:var(--amber-l);border:1px solid #E8C380;border-radius:var(--radius-s);padding:10px 12px;font-size:12px;color:#7A4500;margin-bottom:12px;line-height:1.65}
-
-/* Buttons */
-.btn-p{display:block;width:100%;padding:11px;border:none;border-radius:var(--radius-s);background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.btn-p{display:block;width:100%;padding:11px;border:none;border-radius:var(--radius-s);background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s}
 .btn-p:hover{background:#162a4d}
 .btn-p:disabled{background:#A8B4C4;cursor:not-allowed}
 .btn-s{padding:7px 14px;border:1px solid var(--border-s);border-radius:var(--radius-s);background:#fff;cursor:pointer;color:var(--muted);font-family:inherit;font-size:12px}
-.btn-s:hover{background:var(--bg)}
-
-/* Toast */
 .toast{background:var(--green-l);border:1px solid #9FC9AA;border-radius:var(--radius-s);padding:12px 14px;margin-bottom:12px;display:none}
 .toast-num{font-size:22px;font-weight:700;color:var(--green);font-family:monospace;display:flex;align-items:center;gap:8px}
 .toast-msg{font-size:12px;color:var(--green);margin-top:3px}
 .copy-big-btn{font-size:12px;padding:4px 10px;border:1px solid var(--green);border-radius:var(--radius-s);background:#fff;cursor:pointer;color:var(--green);font-family:inherit;margin-left:auto;flex-shrink:0}
-
-/* Stats */
 .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
 .stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-s);padding:8px;text-align:center}
 .stat-v{font-size:20px;font-weight:700;color:var(--accent)}
 .stat-l{font-size:10px;color:var(--muted)}
-
-/* History table */
 .history-table{width:100%;border-collapse:collapse;font-size:12px}
 .history-table th{text-align:left;padding:7px 8px;border-bottom:2px solid var(--border-s);color:var(--muted);font-weight:600;font-size:11px}
 .history-table td{padding:7px 8px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
@@ -131,117 +80,138 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .copy-btn{font-size:10px;padding:2px 6px;border:1px solid var(--border-s);border-radius:4px;background:#fff;cursor:pointer;color:var(--muted);font-family:inherit;margin-left:4px;vertical-align:middle}
 .filter-row{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
 .filter-select{padding:5px 8px;border:1px solid var(--border-s);border-radius:var(--radius-s);font-family:inherit;font-size:12px;background:var(--surface);color:var(--text);outline:none}
-
-/* Empty / Loading */
 .empty{text-align:center;padding:24px;color:var(--hint);font-size:13px}
 .loading-box{text-align:center;padding:30px;color:var(--hint)}
 .loading-spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* Admin init log */
-.init-log{background:#1E1E1E;border-radius:var(--radius-s);padding:12px;font-size:12px;color:#9CDCFE;font-family:monospace;line-height:1.8;max-height:260px;overflow-y:auto;margin-top:10px;display:none}
-.log-ok{color:#4ade80}.log-err{color:#f87171}.log-info{color:#fbbf24}
-.counter-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
-.counter-table th{text-align:left;padding:6px 8px;border-bottom:2px solid var(--border-s);color:var(--muted);font-weight:600;font-size:11px}
-.counter-table td{padding:6px 8px;border-bottom:1px solid var(--border)}
-.counter-table tr:last-child td{border-bottom:none}
-/* proj card styles */
-.wtabs{display:flex;border:1px solid var(--border);border-radius:var(--radius-s);overflow:hidden;margin-bottom:0;background:var(--surface)}
-.wt{flex:1;padding:8px 6px;border:none;background:none;font-family:inherit;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;border-right:1px solid var(--border);transition:background .12s}
+/* ── Menu overlay ── */
+.menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:flex-start;justify-content:flex-end}
+.menu-overlay.open{display:flex}
+.menu-panel{background:var(--surface);width:240px;min-height:100vh;padding:0;box-shadow:-4px 0 20px rgba(0,0,0,.15);display:flex;flex-direction:column}
+.menu-header{background:var(--accent);color:#fff;padding:14px 16px;display:flex;align-items:center;justify-content:space-between}
+.menu-header-title{font-size:14px;font-weight:700}
+.menu-close{width:30px;height:30px;border:none;background:rgba(255,255,255,.2);border-radius:var(--radius-s);cursor:pointer;color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center}
+.menu-body{padding:16px;flex:1}
+.menu-section{margin-bottom:20px}
+.menu-section-title{font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--hint);text-transform:uppercase;margin-bottom:8px}
+.menu-item{display:block;width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-s);background:var(--bg);font-family:inherit;font-size:13px;color:var(--text);cursor:pointer;text-align:left;margin-bottom:6px;transition:all .15s}
+.menu-item:hover{background:var(--accent-l);border-color:var(--accent);color:var(--accent-t)}
+
+/* ── PIN overlay ── */
+.pin-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;display:none;align-items:center;justify-content:center;padding:20px}
+.pin-overlay.open{display:flex}
+.pin-box{background:var(--surface);border-radius:var(--radius);padding:28px 24px;width:100%;max-width:300px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.18)}
+.pin-input{width:100%;padding:13px;text-align:center;font-size:24px;letter-spacing:.4em;border:1px solid var(--border-s);border-radius:var(--radius-s);font-family:inherit;background:var(--bg);color:var(--text);outline:none;margin-bottom:8px}
+.pin-input:focus{border-color:var(--accent);background:#fff}
+.pin-err{font-size:12px;color:var(--red);min-height:18px;margin-bottom:8px}
+.pin-row{display:flex;gap:8px}
+.pin-ok{flex:1;padding:10px;border:none;border-radius:var(--radius-s);background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.pin-cancel{padding:10px 16px;border:1px solid var(--border-s);border-radius:var(--radius-s);background:#fff;cursor:pointer;color:var(--muted);font-family:inherit;font-size:13px}
+
+/* ══ 🐠 小福 AI 功能樣式 ══ */
+
+/* 智能建議框 */
+.ai-suggest-box{background:var(--purple-l);border:1px solid #DDD6FE;border-radius:var(--radius-s);padding:10px 12px;margin-top:6px;display:none}
+.ai-suggest-box.show{display:block}
+.ai-suggest-title{font-size:11px;font-weight:700;color:var(--purple);margin-bottom:6px;display:flex;align-items:center;gap:4px}
+.ai-suggest-chips{display:flex;gap:5px;flex-wrap:wrap}
+.ai-suggest-chip{padding:4px 10px;border:1px solid #C4B5FD;border-radius:20px;background:#fff;cursor:pointer;font-family:inherit;font-size:12px;color:var(--purple);font-weight:500;transition:all .15s}
+.ai-suggest-chip:hover{background:var(--purple);color:#fff;border-color:var(--purple)}
+.ai-suggest-chip.selected{background:var(--purple);color:#fff;border-color:var(--purple)}
+
+/* 重複偵測警告 */
+.dup-warn-box{background:var(--amber-l);border:1px solid #E8C380;border-radius:var(--radius-s);padding:12px 14px;margin-bottom:12px;display:none}
+.dup-warn-box.show{display:block}
+.dup-warn-title{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.dup-item{background:#fff;border:1px solid #E8C380;border-radius:var(--radius-s);padding:8px 10px;margin-bottom:6px;font-size:12px}
+.dup-item:last-child{margin-bottom:0}
+.dup-num{font-family:monospace;font-weight:700;color:var(--accent);margin-right:6px}
+.dup-score{font-size:10px;padding:1px 6px;border-radius:20px;background:var(--amber-l);color:var(--amber);font-weight:700;float:right}
+.dup-actions{display:flex;gap:6px;margin-top:10px}
+.dup-confirm-btn{flex:1;padding:7px;border:none;border-radius:var(--radius-s);background:var(--amber);color:#fff;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.dup-cancel-btn{padding:7px 14px;border:1px solid var(--border-s);border-radius:var(--radius-s);background:#fff;cursor:pointer;color:var(--muted);font-family:inherit;font-size:12px}
+
+/* AI 狀態列 */
+.ai-status-bar{background:var(--purple-l);border:1px solid #DDD6FE;border-radius:var(--radius-s);padding:8px 12px;margin-bottom:10px;font-size:12px;color:var(--purple);display:none;align-items:center;gap:8px}
+.ai-status-bar.show{display:flex}
+.ai-spinner{width:13px;height:13px;border:2px solid #DDD6FE;border-top-color:var(--purple);border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0}
+
+/* 月報按鈕區 */
+.monthly-panel{background:var(--purple-l);border:1px solid #DDD6FE;border-radius:var(--radius);padding:14px 16px;margin-bottom:12px}
+.monthly-title{font-size:13px;font-weight:700;color:var(--purple);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.monthly-sub{font-size:12px;color:#6D28D9;margin-bottom:10px;line-height:1.6}
+.monthly-btn{display:flex;align-items:center;gap:7px;padding:9px 16px;border:none;border-radius:var(--radius-s);background:var(--purple);color:#fff;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .2s;width:100%;justify-content:center}
+.monthly-btn:active{opacity:.8}
+.monthly-btn:disabled{background:#A78BFA;cursor:not-allowed}
+.monthly-status{margin-top:8px;font-size:12px;display:none}
+
+/* 專案控管相關（保留原有） */
+.wtabs{display:flex;border:1px solid var(--border);border-radius:var(--radius-s);overflow:hidden;margin-bottom:10px;background:var(--surface)}
+.wt{flex:1;padding:8px 6px;border:none;background:none;font-family:inherit;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;border-right:1px solid var(--border)}
 .wt:last-child{border-right:none}
 .wt.on{background:var(--accent);color:#fff}
 .wt-sub{font-size:10px;opacity:.7}
 .wt-n{font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px;background:var(--red-l);color:var(--red);margin-top:1px;min-width:20px;text-align:center}
 .wt.on .wt-n{background:rgba(255,255,255,.25);color:#fff}
-.proj-sec{margin-bottom:8px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--surface);box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.proj-sec{margin-bottom:8px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--surface)}
 .proj-sec-hdr{display:flex;align-items:center;gap:7px;padding:9px 12px;background:var(--bg);cursor:pointer;user-select:none;border-bottom:1px solid var(--border)}
-.proj-sec-hdr:hover{background:#F0EDE8}
 .proj-sec-arr{font-size:10px;color:var(--hint);transition:transform .15s;flex-shrink:0}
 .proj-sec-arr.op{transform:rotate(90deg)}
 .proj-sec-t{font-size:13px;font-weight:700;color:var(--text);flex:1}
 .proj-sec-cnt{font-size:11px;color:var(--muted);background:var(--border);border-radius:20px;padding:1px 7px}
 .proj-sec-body{display:none;padding:5px 6px 6px}
 .proj-sec-body.op{display:block}
-.pcard{border:1px solid var(--border);border-radius:var(--radius-s);margin-bottom:4px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.04)}
-.pcard.editing{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-l)}
-.pcard-hdr{display:flex;align-items:center;gap:6px;padding:8px 10px;cursor:pointer;user-select:none}
-.pcard-arr{font-size:9px;color:var(--hint);transition:transform .15s;flex-shrink:0}
-.pcard-arr.op{transform:rotate(90deg)}
-.pcard-info{flex:1;min-width:0}
-.pcard-title-row{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
-.pcard-title{font-size:13px;font-weight:500;color:var(--text);line-height:1.3}
-.pcard-num{font-size:10px;padding:1px 5px;border-radius:4px;background:var(--accent-l);color:var(--accent-t);flex-shrink:0;font-family:monospace}
-.pcard-date{font-size:10px;padding:1px 6px;border-radius:20px;background:var(--bg);color:var(--muted);border:1px solid var(--border);flex-shrink:0}
+.pcard{border:1px solid var(--border);border-radius:var(--radius-s);margin-bottom:4px;background:#fff}
+.pcard-hdr{display:flex;align-items:center;gap:6px;padding:8px 10px;cursor:pointer}
+.pcard-title{font-size:13px;font-weight:500;color:var(--text);flex:1}
+.pcard-num{font-size:10px;padding:1px 5px;border-radius:4px;background:var(--accent-l);color:var(--accent-t);font-family:monospace}
 .pcard-status{font-size:10px;padding:2px 8px;border-radius:20px;flex-shrink:0;font-weight:600}
-.pcard-saved{font-size:10px;color:var(--green);display:none;flex-shrink:0}
-.pcard-body{display:none;padding:0 10px 10px;border-top:1px solid var(--border)}
-.pcard-body.op{display:block}
-.pfi{padding:7px 0 4px;font-size:12px;line-height:1.7}
-.pfi-row{display:flex;gap:6px;margin-bottom:2px}
-.pfi-label{color:var(--hint);white-space:nowrap;width:56px;flex-shrink:0}
-.pfi-val{color:var(--muted);flex:1;word-break:break-all}
-.pupd-box{background:var(--bg);border-radius:var(--radius-s);padding:6px 8px;font-size:11.5px;color:var(--muted);line-height:1.0;margin:3px 0;border:1px solid var(--border)}
-.upd-line{padding:4px 0;border-bottom:1px solid var(--border);line-height:1.55;word-break:break-word}
-.upd-line:last-child{border-bottom:none}
-.upd-seq{font-weight:700;color:var(--accent-t);font-family:monospace;margin-right:2px}
-.upd-latest .upd-seq{color:var(--amber)}
-.upd-latest{color:var(--text)}
-.pedit-area{background:var(--accent-l);border-radius:var(--radius-s);padding:9px 10px;margin-top:7px;border:1px solid #C8D8F0;display:none}
-.pedit-row{display:flex;align-items:center;gap:7px;margin-bottom:6px}
-.pedit-label{font-size:11px;color:var(--muted);white-space:nowrap;width:56px;flex-shrink:0}
-.pedit-area select,.pedit-area input,.pedit-area textarea{font-size:12px;padding:5px 8px;border:1px solid var(--border-s);border-radius:var(--radius-s);font-family:inherit;background:#fff;color:var(--text);flex:1;outline:none}
-.pedit-area select:focus,.pedit-area input:focus,.pedit-area textarea:focus{border-color:var(--accent)}
-.pedit-area textarea{resize:vertical;min-height:50px}
-.edit-btn{font-size:11px;padding:3px 8px;border:1px solid var(--border-s);border-radius:var(--radius-s);background:#fff;cursor:pointer;color:var(--muted);font-family:inherit}
-.psave-btn{font-size:12px;padding:5px 14px;border:none;border-radius:var(--radius-s);background:var(--accent);color:#fff;cursor:pointer;font-weight:700;font-family:inherit}
-.pcancel-btn{font-size:12px;padding:5px 11px;border:1px solid var(--border-s);border-radius:var(--radius-s);background:#fff;cursor:pointer;color:var(--muted);font-family:inherit}
-.pstat-done{opacity:.45}.pstat-done .pcard-title{text-decoration:line-through}
 .nb-prog{background:var(--amber-l);color:var(--amber)}
 .nb-done{background:var(--green-l);color:var(--green)}
 .nb-stop{background:var(--red-l);color:var(--red)}
 .nb-pend{background:var(--blue-l);color:var(--blue)}
-.nb-def{background:var(--bg);color:var(--muted);border:1px solid var(--border)}
+.add-opt-row{display:flex;gap:6px;margin-top:5px}
+.add-opt-input{flex:1;padding:6px 8px;border:1px solid var(--border-s);border-radius:var(--radius-s);font-family:inherit;font-size:12px;background:var(--bg);color:var(--text);outline:none}
+.add-opt-btn{padding:6px 10px;border:1px solid var(--blue);border-radius:var(--radius-s);background:var(--blue-l);color:var(--blue);font-family:inherit;font-size:12px;cursor:pointer;font-weight:500}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 
-<!-- ── Header ── -->
 <div class="header">
   <div class="h-left">
     <div class="h-title">
-      <span class="sync-dot" id="syn-dot" style="background:#fbbf24"></span>
+      <span class="sync-dot" id="syn-dot"></span>
       📋 產品開發需求單取號系統
+      <span style="font-size:10px;background:rgba(255,255,255,.2);padding:2px 7px;border-radius:20px;display:flex;align-items:center;gap:4px">
+        <span class="ai-dot" id="ai-dot"></span>🐠
+      </span>
     </div>
     <div class="h-sub" id="h-sub">台北/宜蘭共用 · 即時同步</div>
   </div>
-  <button class="menu-btn" onclick="openMenu()" aria-label="選單">
-    <span></span><span></span><span></span>
-  </button>
+  <button class="menu-btn" onclick="openMenu()"><span></span><span></span><span></span></button>
 </div>
 
-<!-- ── Admin bar（後台模式時顯示）── -->
 <div class="admin-bar" id="admin-bar">
   <span class="admin-bar-label">⚙️ 管理員後台</span>
   <button class="admin-exit" onclick="exitAdmin()">← 返回取號</button>
 </div>
 
-<!-- ── 一般用戶 Nav ── -->
 <div class="nav" id="user-nav">
   <button class="nav-btn active" id="nav-new" onclick="switchUserTab('new')">新增取號</button>
   <button class="nav-btn" id="nav-history" onclick="switchUserTab('history')">取號記錄</button>
 </div>
-
-<!-- ── 後台 Nav ── -->
 <div class="nav" id="admin-nav" style="display:none">
-  <button class="nav-btn active" id="nav-adm-proj"    onclick="switchAdminTab('adm-proj')">專案控管</button>
-  <button class="nav-btn"        id="nav-adm-options" onclick="switchAdminTab('adm-options')">選項管理</button>
+  <button class="nav-btn active" id="nav-adm-proj" onclick="switchAdminTab('adm-proj')">專案控管</button>
+  <button class="nav-btn" id="nav-adm-monthly" onclick="switchAdminTab('adm-monthly')">🐠 月報產出</button>
+  <button class="nav-btn" id="nav-adm-deleted" onclick="switchAdminTab('adm-deleted')">刪除記錄</button>
+  <button class="nav-btn" id="nav-adm-options" onclick="switchAdminTab('adm-options')">選項管理</button>
 </div>
 
-<!-- ── Main content ── -->
 <div class="content" id="main-content"></div>
 
-<!-- ── Slide menu ── -->
+<!-- Menu -->
 <div class="menu-overlay" id="menu-overlay" onclick="closeMenuIfOutside(event)">
   <div class="menu-panel" id="menu-panel">
     <div class="menu-header">
@@ -256,7 +226,8 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
       </div>
       <div class="menu-section">
         <div class="menu-section-title">專案管理</div>
-        <button class="menu-item" onclick="closeMenu();S.adminOK=true;S.tab='adm-proj';render();scrollTo(0,0)" id="menu-proj-btn">📊 研發專案控管</button>
+        <button class="menu-item" onclick="closeMenu();S.adminOK=true;S.tab='adm-proj';render();scrollTo(0,0)">📊 研發專案控管</button>
+        <button class="menu-item" onclick="closeMenu();S.adminOK=true;S.tab='adm-monthly';render();scrollTo(0,0)">🐠 月報自動產出</button>
       </div>
       <div class="menu-section">
         <div class="menu-section-title">管理員</div>
@@ -266,14 +237,13 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
   </div>
 </div>
 
-<!-- ── PIN overlay ── -->
+<!-- PIN -->
 <div class="pin-overlay" id="pin-overlay">
   <div class="pin-box">
-    <div class="pin-icon">🔐</div>
-    <div class="pin-title">管理員驗證</div>
-    <div class="pin-sub">請輸入後台密碼</div>
-    <input class="pin-input" type="password" id="pin-input" maxlength="8" placeholder="••••"
-      onkeydown="if(event.key==='Enter')verifyPin()">
+    <div style="font-size:24px;margin-bottom:10px">🔐</div>
+    <div style="font-size:16px;font-weight:700;color:var(--accent);margin-bottom:4px">管理員驗證</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:18px">請輸入後台密碼</div>
+    <input class="pin-input" type="password" id="pin-input" maxlength="8" placeholder="••••" onkeydown="if(event.key==='Enter')verifyPin()">
     <div class="pin-err" id="pin-err"></div>
     <div class="pin-row">
       <button class="pin-cancel" onclick="closePin()">取消</button>
@@ -283,28 +253,31 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 </div>
 
 <script>
-// ── Firebase ──────────────────────────────────────────────────────────────────
+// ── Firebase ──
 const FB='https://evaluation-survey-form-default-rtdb.firebaseio.com';
 const P_COUNTERS='prod_req/counters';
 const P_RECORDS='prod_req/records';
+const P_DELETED='prod_req/deleted_records';
 const P_OPTIONS='prod_req/options';
-const ADMIN_PIN='8888';
+const P_PROJ='prod_req/proj_details';
+const ADMIN_PIN='Bfy@90632323';
 
 async function fbGet(p){try{const r=await fetch(`${FB}/${p}.json`);if(!r.ok)return null;return r.json();}catch(e){return null;}}
 async function fbSet(p,v){try{await fetch(`${FB}/${p}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(v)});return true;}catch(e){return false;}}
 async function fbPatch(p,v){try{await fetch(`${FB}/${p}.json`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(v)});return true;}catch(e){return false;}}
 async function fbPost(p,v){try{const r=await fetch(`${FB}/${p}.json`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(v)});return r.ok;}catch(e){return false;}}
+async function fbDelete(p){try{const r=await fetch(`${FB}/${p}.json`,{method:'DELETE'});return r.ok;}catch(e){return false;}}
 
-// ── State ─────────────────────────────────────────────────────────────────────
 let S={
-  tab:'new',
-  adminOK:false,
-  counters:{},
-  records:[],
+  tab:'new', adminOK:false,
+  counters:{}, records:[], fbKeyMap:{},
   options:{countries:[],categories:[]},
-  projDetails:{},
+  projDetails:{}, fbLoaded:false,
   lastToastNum:'',
-  fbLoaded:false
+  // AI 狀態
+  aiSuggestCache:{},  // {name -> {category, confidence}}
+  dupWarning:null,    // 重複偵測結果
+  aiThinking:false,
 };
 
 function getRocYear(){return String(new Date().getFullYear()-1911).padStart(3,'0');}
@@ -316,90 +289,313 @@ function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')
 
 function setSyn(st){
   const d=document.getElementById('syn-dot');
-  if(st==='ok')d.style.background='#4ade80';
-  else if(st==='sv')d.style.background='#fbbf24';
-  else d.style.background='#f87171';
+  if(st==='ok')d.className='sync-dot ok';
+  else if(st==='sv')d.className='sync-dot';
+  else d.className='sync-dot err';
 }
-
-// ── Menu ──────────────────────────────────────────────────────────────────────
-function openMenu(){
-  document.getElementById('menu-overlay').classList.add('open');
-  // Update menu button label based on state
-  const ab=document.getElementById('menu-admin-btn');
-  if(ab) ab.textContent=S.adminOK?'✕ 離開後台':'🔐 進入後台';
-}
-function closeMenu(){document.getElementById('menu-overlay').classList.remove('open');}
-function closeMenuIfOutside(e){if(e.target===document.getElementById('menu-overlay'))closeMenu();}
-
-function menuGoTab(tab){
-  closeMenu();
-  if(S.adminOK) exitAdmin();
-  S.tab=tab;render();scrollTo(0,0);
-}
-function menuAdminClick(){
-  if(S.adminOK){closeMenu();exitAdmin();return;}
-  closeMenu();
-  openPin();
-}
-
-// ── PIN ───────────────────────────────────────────────────────────────────────
-function openPin(){
-  document.getElementById('pin-input').value='';
-  document.getElementById('pin-err').textContent='';
-  document.getElementById('pin-overlay').classList.add('open');
-  setTimeout(()=>document.getElementById('pin-input').focus(),100);
-}
-function closePin(){document.getElementById('pin-overlay').classList.remove('open');}
-function verifyPin(){
-  const v=document.getElementById('pin-input').value;
-  if(v===ADMIN_PIN){
-    closePin();
-    S.adminOK=true;S.tab='adm-proj';
-    if(!S.fbLoaded)loadFirebase().then(()=>render());else render();
+function setAI(st,msg=''){
+  const dot=document.getElementById('ai-dot');
+  const bar=document.getElementById('ai-status-bar');
+  const spin=bar?bar.querySelector('.ai-spinner'):null;
+  const txt=bar?bar.querySelector('.ai-status-text'):null;
+  if(st==='thinking'){
+    dot.className='ai-dot thinking';
+    if(bar){bar.className='ai-status-bar show';if(spin)spin.style.display='block';if(txt)txt.textContent=msg||'🐠 小福思考中...';}
+  }else if(st==='done'){
+    dot.className='ai-dot done';
+    if(bar){if(spin)spin.style.display='none';if(txt){txt.textContent=msg||'✓ 完成';txt.style.color='var(--green)';}
+      setTimeout(()=>{bar.className='ai-status-bar';dot.className='ai-dot';if(txt)txt.style.color='';},4000);}
+  }else if(st==='err'){
+    dot.className='ai-dot err';
+    if(bar){bar.className='ai-status-bar show';if(spin)spin.style.display='none';if(txt){txt.textContent=msg;txt.style.color='var(--red)';}
+      setTimeout(()=>{bar.className='ai-status-bar';dot.className='ai-dot';},5000);}
   }else{
-    document.getElementById('pin-err').textContent='密碼錯誤，請再試一次';
-    document.getElementById('pin-input').value='';
-    document.getElementById('pin-input').focus();
-  }
-}
-function exitAdmin(){
-  S.adminOK=false;S.tab='new';render();scrollTo(0,0);
-}
-
-// ── Render dispatcher ─────────────────────────────────────────────────────────
-function render(){
-  const userNav=document.getElementById('user-nav');
-  const adminNav=document.getElementById('admin-nav');
-  const adminBar=document.getElementById('admin-bar');
-
-  if(S.adminOK){
-    userNav.style.display='none';
-    adminNav.style.display='flex';
-    adminBar.classList.add('show');
-    // sync admin nav active
-    ['adm-proj','adm-options'].forEach(t=>{
-      const b=document.getElementById('nav-'+t);
-      if(b)b.classList.toggle('active',S.tab===t);
-    });
-    if(S.tab==='adm-proj')renderAdmProj();
-    else if(S.tab==='adm-options')renderAdmOptions();
-  }else{
-    userNav.style.display='flex';
-    adminNav.style.display='none';
-    adminBar.classList.remove('show');
-    ['new','history'].forEach(t=>{
-      const b=document.getElementById('nav-'+t);
-      if(b)b.classList.toggle('active',S.tab===t);
-    });
-    if(S.tab==='new')renderNew();
-    else if(S.tab==='history')renderHistory();
+    dot.className='ai-dot';
+    if(bar)bar.className='ai-status-bar';
   }
 }
 
-function switchUserTab(tab){S.tab=tab;render();}
-function switchAdminTab(tab){S.tab=tab;render();}
+// ══════════════════════════════════════════════
+// 🐠 AI 小福核心
+// ══════════════════════════════════════════════
+async function callClaude(system, user, maxTokens=600){
+  const res=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:maxTokens,system,messages:[{role:'user',content:user}]})
+  });
+  const data=await res.json();
+  return (data.content||[]).map(c=>c.text||'').join('');
+}
 
-// ── User: New number ──────────────────────────────────────────────────────────
+// ── 1. 智能填寫建議 ──────────────────────────────
+let suggestTimer=null;
+function onNameInput(){
+  const name=document.getElementById('inp-name')?.value.trim()||'';
+  clearTimeout(suggestTimer);
+  hideSuggest();
+  if(name.length<4)return;
+  // 先查快取
+  if(S.aiSuggestCache[name]){
+    showSuggest(S.aiSuggestCache[name]);return;
+  }
+  suggestTimer=setTimeout(()=>runSuggest(name),800);
+}
+
+async function runSuggest(name){
+  setAI('thinking','🐠 分析品項類別...');
+  const system=`你是食品研發專案分類助理。
+根據產品名稱，判斷最適合的「項目類別」，從以下選項中選擇：
+樣品、餅體、成本試算、新品/成本試算、系統認證、樣品/規格
+
+只回傳 JSON，格式：{"category":"類別名稱","confidence":"high/medium","reason":"一句話原因"}
+不要其他文字。`;
+  const user=`產品名稱：${name}`;
+  try{
+    const raw=await callClaude(system,user,150);
+    const clean=raw.replace(/```json|```/g,'').trim();
+    const result=JSON.parse(clean);
+    S.aiSuggestCache[name]=result;
+    showSuggest(result);
+    setAI('done','🐠 已分析類別');
+  }catch(e){
+    setAI('err','🐠 分析失敗，請手動選擇');
+    console.error('suggest error',e);
+  }
+}
+
+function showSuggest(result){
+  const box=document.getElementById('ai-suggest-box');
+  const chips=document.getElementById('ai-suggest-chips');
+  if(!box||!chips)return;
+  // 主建議 + 相關選項
+  const CATS=['樣品','餅體','成本試算','新品/成本試算','系統認證','樣品/規格'];
+  const suggestions=[result.category,...CATS.filter(c=>c!==result.category).slice(0,2)];
+  chips.innerHTML=suggestions.map(c=>`
+    <button class="ai-suggest-chip ${c===result.category?'selected':''}" onclick="applySuggest('${escH(c)}')">
+      ${c===result.category?'✓ ':''>${escH(c)}
+    </button>`).join('');
+  // 修正模板語法
+  chips.innerHTML=suggestions.map(c=>`<button class="ai-suggest-chip ${c===result.category?'selected':''}" onclick="applySuggest('${escH(c)}')">${c===result.category?'✓ ':''}${escH(c)}</button>`).join('');
+  const hint=box.querySelector('.ai-suggest-hint');
+  if(hint)hint.textContent=result.reason||'';
+  box.className='ai-suggest-box show';
+}
+
+function hideSuggest(){
+  const box=document.getElementById('ai-suggest-box');
+  if(box)box.className='ai-suggest-box';
+}
+
+function applySuggest(cat){
+  const sel=document.getElementById('sel-category');
+  if(sel){sel.value=cat;sel.dispatchEvent(new Event('change'));}
+  // 更新 chip 選中狀態
+  document.querySelectorAll('.ai-suggest-chip').forEach(btn=>{
+    const isThis=btn.textContent.trim().replace(/^✓ /,'')===cat;
+    btn.className='ai-suggest-chip'+(isThis?' selected':'');
+    btn.textContent=(isThis?'✓ ':'')+cat;
+  });
+}
+
+// ── 2. 重複偵測 ──────────────────────────────────
+async function checkDuplicate(name, category){
+  if(!name||S.records.length===0)return false;
+  setAI('thinking','🐠 檢查是否有相似取號...');
+  // 本地相似度計算（不需 AI）
+  const yr=getRocYear();
+  const recentRecords=S.records.filter(r=>r.year===yr).slice(0,50);
+  const similar=recentRecords.filter(r=>{
+    const n1=name.toLowerCase().replace(/[\s_\-]/g,'');
+    const n2=(r.name||'').toLowerCase().replace(/[\s_\-]/g,'');
+    if(n1===n2)return true;
+    // 包含關係
+    if(n1.length>4&&(n1.includes(n2.slice(0,Math.min(n2.length,8)))||n2.includes(n1.slice(0,Math.min(n1.length,8)))))return true;
+    return false;
+  }).slice(0,3);
+
+  if(similar.length===0){setAI('done','🐠 無重複，可以取號');return false;}
+
+  // 有相似，用 AI 判斷是否真的重複
+  const system=`你是品項重複判斷助理。判斷新品項和歷史記錄是否為重複或高度相似。
+只回傳 JSON：{"isDuplicate":true/false,"similarity":"high/medium/low","message":"一句話說明"}`;
+  const user=`新品項：${name}（類別：${category}）
+歷史記錄：${similar.map(r=>`${r.num} - ${r.name}（${r.category}）`).join('\n')}`;
+  try{
+    const raw=await callClaude(system,user,200);
+    const clean=raw.replace(/```json|```/g,'').trim();
+    const result=JSON.parse(clean);
+    if(result.isDuplicate||result.similarity==='high'){
+      S.dupWarning={similar,message:result.message};
+      setAI('err','🐠 偵測到相似品項！');
+      return true;
+    }
+    setAI('done','🐠 確認非重複');
+    return false;
+  }catch(e){
+    setAI('done');
+    return false;
+  }
+}
+
+function showDupWarning(){
+  const box=document.getElementById('dup-warn-box');
+  if(!box||!S.dupWarning)return;
+  const items=S.dupWarning.similar.map(r=>`
+    <div class="dup-item">
+      <span class="dup-num">${escH(r.num)}</span>${escH(r.name)}
+      <span class="dup-score">${escH(r.category)}</span>
+    </div>`).join('');
+  box.innerHTML=`
+    <div class="dup-warn-title">⚠️ 小福偵測到相似品項</div>
+    <div style="font-size:12px;color:var(--amber);margin-bottom:8px">${escH(S.dupWarning.message||'請確認是否為全新需求')}</div>
+    ${items}
+    <div class="dup-actions">
+      <button class="dup-confirm-btn" onclick="confirmDupAndSubmit()">✓ 確認為新需求，繼續取號</button>
+      <button class="dup-cancel-btn" onclick="hideDupWarning()">取消</button>
+    </div>`;
+  box.className='dup-warn-box show';
+}
+
+function hideDupWarning(){
+  const box=document.getElementById('dup-warn-box');
+  if(box)box.className='dup-warn-box';
+  S.dupWarning=null;
+  const btn=document.getElementById('submit-btn');
+  if(btn){btn.disabled=false;btn.textContent='🔢 立即取號';}
+}
+
+async function confirmDupAndSubmit(){
+  hideDupWarning();
+  await doSubmit(true);
+}
+
+// ── 3. 月報自動產出 ──────────────────────────────
+async function generateMonthlyReport(){
+  const btn=document.getElementById('monthly-btn');
+  const statusEl=document.getElementById('monthly-status');
+  if(btn)btn.disabled=true;
+  if(statusEl){statusEl.style.display='block';statusEl.style.color='var(--purple)';statusEl.textContent='🐠 小福正在讀取本月數據...';}
+  setAI('thinking','🐠 產出月報中...');
+
+  // 讀取最新資料
+  const [rawR,rawP]=await Promise.all([fbGet(P_RECORDS),fbGet(P_PROJ)]);
+  const records=rawR?Object.values(rawR):S.records;
+  const projDetails=rawP||S.projDetails;
+  const now=new Date();
+  const yr=getRocYear();
+  const month=now.getMonth()+1;
+  // 本月記錄
+  const monthRecords=records.filter(r=>{
+    if(r.year!==yr)return false;
+    const d=new Date(r.ts||0);
+    return d.getMonth()+1===month;
+  });
+  // 所有當年度專案狀態統計
+  const yearRecords=records.filter(r=>r.year===yr);
+  const statusCount={};
+  const doneStatus=new Set(['已完成','已上市','結案','不執行']);
+  yearRecords.forEach(r=>{
+    const s=projDetails[r.num]?.status||'進行中';
+    statusCount[s]=(statusCount[s]||0)+1;
+  });
+  const overdueCount=yearRecords.filter(r=>{
+    const d=projDetails[r.num];
+    if(!d?.launch)return false;
+    if(doneStatus.has(d.status||''))return false;
+    const parts=d.launch.replace(/-/g,'/').split('/');
+    if(parts.length<2)return false;
+    const launchDate=new Date(parseInt(parts[0]),parseInt(parts[1])-1,parts[2]?parseInt(parts[2]):1);
+    return launchDate<now;
+  }).length;
+
+  const system=`你是研發部月報助理，幫助整理產品開發需求單的月度報告。
+請根據數據產出一份正式的繁體中文月報摘要，格式如下：
+【${parseInt(yr)+1911}年${month}月 研發需求月報】
+
+一、本月取號概況
+（說明本月取號筆數、按國別與類別分佈）
+
+二、累計進行中專案
+（說明今年累計各狀態數量，特別標注逾期數量）
+
+三、本月重點品項
+（列出本月新增的重要品項，不超過5項）
+
+四、注意事項
+（如有逾期專案，提醒需跟進）
+
+語氣正式，言簡意賅。直接輸出月報內容，不要其他說明。`;
+
+  const user=`本月新增取號：${monthRecords.length} 筆
+國別分佈：${Object.entries(monthRecords.reduce((a,r)=>{a[r.country]=(a[r.country]||0)+1;return a},{})).map(([k,v])=>`${k}: ${v}`).join('、')||'無'}
+類別分佈：${Object.entries(monthRecords.reduce((a,r)=>{a[r.category]=(a[r.category]||0)+1;return a},{})).map(([k,v])=>`${k}: ${v}`).join('、')||'無'}
+
+今年累計 ${yearRecords.length} 筆，狀態分佈：
+${Object.entries(statusCount).map(([k,v])=>`${k}: ${v}筆`).join('、')}
+逾期未完成：${overdueCount} 筆
+
+本月新增品項（前5項）：
+${monthRecords.slice(0,5).map(r=>`- ${r.num} ${r.name}（${r.category}，取號人：${r.requester||'—'}）`).join('\n')||'無'}`;
+
+  try{
+    const report=await callClaude(system,user,800);
+    if(statusEl){statusEl.style.color='var(--green)';statusEl.textContent='✓ 月報產出完成！';}
+    setAI('done','🐠 月報完成');
+    // 顯示報告
+    renderMonthlyResult(report,monthRecords,yearRecords,statusCount,overdueCount,yr,month);
+  }catch(e){
+    if(statusEl){statusEl.style.color='var(--red)';statusEl.textContent='❌ 產出失敗：'+e.message;}
+    setAI('err','🐠 月報失敗');
+  }
+  if(btn)btn.disabled=false;
+}
+
+function renderMonthlyResult(report,monthRecs,yearRecs,statusCount,overdueCount,yr,month){
+  const container=document.getElementById('monthly-result');
+  if(!container)return;
+  const adYear=parseInt(yr)+1911;
+  container.innerHTML=`
+    <div style="background:var(--surface);border:1px solid #DDD6FE;border-radius:var(--radius);padding:16px;margin-top:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div style="font-size:13px;font-weight:700;color:var(--purple)">🐠 月報草稿</div>
+        <div style="display:flex;gap:6px">
+          <button onclick="copyMonthlyReport()" style="padding:5px 12px;border:1px solid #DDD6FE;border-radius:var(--radius-s);background:#fff;cursor:pointer;color:var(--purple);font-family:inherit;font-size:12px">複製</button>
+          <button onclick="downloadMonthlyExcel('${yr}','${month}')" style="padding:5px 12px;border:none;border-radius:var(--radius-s);background:var(--purple);cursor:pointer;color:#fff;font-family:inherit;font-size:12px;font-weight:700">📥 下載 Excel</button>
+        </div>
+      </div>
+      <div id="monthly-report-text" style="font-size:13px;line-height:1.9;color:var(--text);white-space:pre-wrap;background:var(--bg);padding:14px;border-radius:var(--radius-s);border:1px solid var(--border);max-height:400px;overflow-y:auto">${escH(report)}</div>
+    </div>`;
+  container.setAttribute('data-report',report);
+}
+
+function copyMonthlyReport(){
+  const el=document.getElementById('monthly-report-text');
+  if(!el)return;
+  navigator.clipboard.writeText(el.textContent).then(()=>alert('✓ 月報已複製'));
+}
+
+async function downloadMonthlyExcel(yr,month){
+  const adYear=parseInt(yr)+1911;
+  const [rawR,rawP]=await Promise.all([fbGet(P_RECORDS),fbGet(P_PROJ)]);
+  const records=(rawR?Object.values(rawR):S.records).filter(r=>r.year===yr);
+  const projDetails=rawP||S.projDetails;
+  const wb=XLSX.utils.book_new();
+  const headers=['項次','編號','項目','名稱','取號人','期望完成日','負責人','狀態','備註','需求內容'];
+  const rows=records.map((r,i)=>{
+    const d=projDetails[r.num]||{};
+    return[i+1,r.num,r.category,r.name,r.requester||'',d.launch||'',d.owner||'',d.status||'進行中',d.note||'',d.reqContent||r.desc||''];
+  });
+  const ws=XLSX.utils.aoa_to_sheet([[`${adYear}年${month}月 研發需求月報`,...Array(9).fill('')],headers,...rows]);
+  ws['!cols']=[{wch:6},{wch:12},{wch:12},{wch:30},{wch:8},{wch:12},{wch:8},{wch:10},{wch:12},{wch:36}];
+  ws['!merges']=[{s:{r:0,c:0},e:{r:0,c:9}}];
+  XLSX.utils.book_append_sheet(wb,ws,`${adYear}年${month}月月報`);
+  XLSX.writeFile(wb,`研發需求月報_${adYear}年${month}月.xlsx`);
+}
+
+// ══════════════════════════════════════════════
+// 取號表單
+// ══════════════════════════════════════════════
 function renderNew(){
   const yr=getRocYear();
   document.getElementById('main-content').innerHTML=`
@@ -411,6 +607,16 @@ function renderNew(){
       <div class="preview-num" id="preview-num">?? · ${yr} · ???</div>
       <div class="preview-label">編號預覽：國別2碼 + 民國年3碼 + 流水號3碼</div>
     </div>
+
+    <!-- 🐠 AI 狀態列 -->
+    <div class="ai-status-bar" id="ai-status-bar">
+      <div class="ai-spinner"></div>
+      <span class="ai-status-text" style="flex:1">小福思考中...</span>
+    </div>
+
+    <!-- 🐠 重複偵測警告 -->
+    <div class="dup-warn-box" id="dup-warn-box"></div>
+
     <div class="card">
       <div class="card-title">📝 基本資訊</div>
       <div class="row2">
@@ -444,8 +650,13 @@ function renderNew(){
       </div>
       <div class="field">
         <label>名稱 <span class="req">*</span>（必填）</label>
-        <input type="text" id="inp-name" placeholder="例：好市多_松露米片_50克*8包">
+        <input type="text" id="inp-name" placeholder="例：好市多_松露米片_50克*8包" oninput="onNameInput()">
         <div class="err-msg" id="err-name">名稱為必填欄位</div>
+        <!-- 🐠 智能建議框 -->
+        <div class="ai-suggest-box" id="ai-suggest-box">
+          <div class="ai-suggest-title">🐠 小福建議項目類別<span class="ai-suggest-hint" style="font-weight:400;color:var(--muted);margin-left:6px;font-size:10px"></span></div>
+          <div class="ai-suggest-chips" id="ai-suggest-chips"></div>
+        </div>
       </div>
       <div class="field">
         <label>取號人 <span class="req">*</span>（必填）</label>
@@ -456,7 +667,6 @@ function renderNew(){
         <label>期望完成日 <span class="req">*</span></label>
         <input type="date" id="inp-duedate" style="color:var(--text)">
         <div class="err-msg" id="err-duedate">請選擇期望完成日</div>
-        <div style="font-size:11px;color:var(--hint);margin-top:3px">取號後會自動帶入專案的預計完成日，之後可在專案控管頁修改</div>
       </div>
       <div class="field">
         <label>需求內容 <span class="req">*</span></label>
@@ -493,8 +703,7 @@ async function submitForm(){
   const nm=document.getElementById('inp-name').value.trim();
   const requester=document.getElementById('inp-requester').value.trim();
   const desc=document.getElementById('inp-desc').value.trim();
-  const duedateRaw=document.getElementById('inp-duedate').value; // yyyy-mm-dd
-  // 轉成 yyyy/mm/dd 格式
+  const duedateRaw=document.getElementById('inp-duedate').value;
   const duedate=duedateRaw?duedateRaw.replace(/-/g,'/'):'';
   document.getElementById('err-country').style.display=!c?'block':'none';
   document.getElementById('err-category').style.display=!cat?'block':'none';
@@ -505,18 +714,38 @@ async function submitForm(){
   if(!c||!cat||!nm||!requester||!duedate||!desc)return;
 
   const btn=document.getElementById('submit-btn');
+  btn.disabled=true;btn.textContent='🐠 小福驗證中...';
+
+  // 🐠 重複偵測
+  const isDup=await checkDuplicate(nm,cat);
+  if(isDup){
+    showDupWarning();
+    btn.disabled=false;btn.textContent='🔢 立即取號';
+    return;
+  }
+  await doSubmit(false);
+}
+
+async function doSubmit(skipDupCheck){
+  const c=document.getElementById('sel-country').value;
+  const cat=document.getElementById('sel-category').value;
+  const nm=document.getElementById('inp-name').value.trim();
+  const requester=document.getElementById('inp-requester').value.trim();
+  const desc=document.getElementById('inp-desc').value.trim();
+  const duedateRaw=document.getElementById('inp-duedate').value;
+  const duedate=duedateRaw?duedateRaw.replace(/-/g,'/'):'';
+
+  const btn=document.getElementById('submit-btn');
   btn.disabled=true;btn.textContent='取號中，請稍候...';
   setSyn('sv');
 
   const fresh=await fbGet(P_COUNTERS);
   if(fresh)S.counters=fresh;
-
   const yr=getRocYear();
   const key=makeKey(c);
   const seq=(S.counters[key]||0)+1;
   const num=fmtNum(c,yr,seq);
   S.counters[key]=seq;
-
   const now=new Date();
   const record={
     num,country:c,year:yr,seq,category:cat,name:nm,requester,desc,
@@ -524,54 +753,19 @@ async function submitForm(){
     time:now.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}),
     ts:now.getTime()
   };
-
   const[ok1,ok2]=await Promise.all([fbPatch(P_COUNTERS,{[key]:seq}),fbPost(P_RECORDS,record)]);
   setSyn(ok1&&ok2?'ok':'err');
   S.records.unshift(record);
   S.lastToastNum=num;
-  // 初始化新記錄的 projDetails（預設進行中）
-  // 初始化新記錄的 projDetails，帶入期望完成日
-  if(!S.projDetails[num]) S.projDetails[num]={status:'',owner:'',launch:duedate,progress:'',note:'',reqContent:desc};
-  // 若 duedate 有填，同步寫入 Firebase proj_details
-  if(duedate||desc){
-    await fbPatch(P_PROJ+'/'+num,{launch:duedate,reqContent:desc});
-  }
-
+  if(!S.projDetails[num])S.projDetails[num]={status:'',owner:'',launch:duedate,progress:'',note:'',reqContent:desc};
+  if(duedate||desc)await fbPatch(P_PROJ+'/'+num,{launch:duedate,reqContent:desc});
   renderNew();
   setTimeout(()=>{
-    const t=document.getElementById('toast');
-    const tn=document.getElementById('toast-num-text');
-    if(t&&tn){
-      tn.textContent=num;
-      t.style.display='block';
-      // 加入「前往專案控管」按鈕
-      const existing=t.querySelector('.go-proj-btn');
-      if(!existing){
-        const goBtn=document.createElement('button');
-        goBtn.className='go-proj-btn';
-        goBtn.textContent='📋 前往專案控管';
-        goBtn.style.cssText='font-size:12px;padding:4px 10px;border:1px solid var(--green);border-radius:var(--radius-s);background:#fff;cursor:pointer;color:var(--green);font-family:inherit;margin-left:8px;flex-shrink:0';
-        goBtn.onclick=()=>{
-          t.style.display='none';
-          // 進入後台專案控管
-          S.adminOK=true;S.tab='adm-proj';
-          projYear=getRocYear();
-          projQuarter=0;projCat='';projStatusFilter='';
-          render();
-          scrollTo(0,0);
-          setTimeout(()=>{
-            const card=document.getElementById('pc-'+num);
-            if(card){card.scrollIntoView({behavior:'smooth',block:'center'});}
-          },400);
-        };
-        const numEl=t.querySelector('.toast-num');
-        if(numEl) numEl.appendChild(goBtn);
-      }
-    }
+    const t=document.getElementById('toast'),tn=document.getElementById('toast-num-text');
+    if(t&&tn){tn.textContent=num;t.style.display='block';}
     setTimeout(()=>{const t2=document.getElementById('toast');if(t2)t2.style.display='none';},10000);
   },0);
 }
-
 
 function copyToast(){
   const num=S.lastToastNum;if(!num)return;
@@ -581,7 +775,7 @@ function copyToast(){
   }).catch(()=>alert('編號：'+num));
 }
 
-// ── User: History ─────────────────────────────────────────────────────────────
+// ── 取號記錄 ─────────────────────────────────────
 function renderHistory(){
   const yr=getRocYear();
   const today=new Date().toLocaleDateString('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit'});
@@ -590,19 +784,33 @@ function renderHistory(){
   let filtered=S.records;
   if(fc)filtered=filtered.filter(r=>r.country===fc);
   if(fy)filtered=filtered.filter(r=>r.year===fy);
-
+  const numCnt={};
+  S.records.forEach(r=>{numCnt[r.num]=(numCnt[r.num]||0)+1;});
+  const dupeNums=Object.entries(numCnt).filter(([,v])=>v>1);
+  const dupeWarnHtml=dupeNums.length>0?`
+    <div style="background:var(--red-l);border:1px solid #E8A0A0;border-radius:var(--radius-s);padding:10px 14px;margin-bottom:10px;font-size:12px;color:var(--red)">
+      ⚠️ <strong>發現重複編號 ${dupeNums.length} 個</strong>：
+      ${dupeNums.map(([n,c])=>`<span style="background:#fff;padding:1px 6px;border-radius:4px;margin:0 2px;font-family:monospace">${n}×${c}</span>`).join('')}
+    </div>`:'';
   const rowsHtml=filtered.length===0?'<div class="empty">尚無符合記錄</div>':
-    `<table class="history-table"><thead><tr><th>編號</th><th>項目</th><th>名稱</th><th>取號人</th><th>時間</th></tr></thead><tbody>${
-      filtered.map(r=>`<tr>
-        <td><span class="num-badge">${escH(r.num)}</span><button class="copy-btn" onclick="cpNum('${escH(r.num)}',this)">複製</button></td>
-        <td><span class="cat-badge">${escH(r.category)}</span></td>
-        <td style="min-width:130px;max-width:220px;font-size:12px;word-break:break-all;white-space:pre-wrap">${escH(r.name)}</td>
-        <td style="font-size:12px;white-space:nowrap">${escH(r.requester||'—')}</td>
-        <td style="color:var(--muted);font-size:11px">${r.date}<br>${r.time}</td>
-      </tr>`).join('')
+    `<table class="history-table"><thead><tr><th>編號</th><th>項目</th><th>名稱</th><th>取號人</th><th>時間</th><th style="text-align:center">操作</th></tr></thead><tbody>${
+      filtered.map(r=>{
+        const isDupe=(numCnt[r.num]||0)>1;
+        return `<tr${isDupe?' style="background:var(--red-l)"':''}>
+          <td><span class="num-badge">${escH(r.num)}</span>${isDupe?'<span style="font-size:10px;color:var(--red);margin-left:3px">重複</span>':''}</td>
+          <td><span class="cat-badge">${escH(r.category)}</span></td>
+          <td style="min-width:130px;max-width:220px;font-size:12px;word-break:break-all;white-space:pre-wrap">${escH(r.name)}</td>
+          <td style="font-size:12px;white-space:nowrap">${escH(r.requester||'—')}</td>
+          <td style="color:var(--muted);font-size:11px">${r.date}<br>${r.time}</td>
+          <td style="text-align:center;white-space:nowrap">
+            <button class="copy-btn" onclick="cpNum('${escH(r.num)}',this)">複製</button>
+            <button class="copy-btn" onclick="confirmDelete('${escH(r.num)}')" style="border-color:#E8A0A0;color:var(--red);margin-left:4px">刪除</button>
+          </td>
+        </tr>`;
+      }).join('')
     }</tbody></table>`;
-
   document.getElementById('main-content').innerHTML=`
+    ${dupeWarnHtml}
     <div class="stats-row">
       <div class="stat"><div class="stat-v">${S.records.length}</div><div class="stat-l">總取號數</div></div>
       <div class="stat"><div class="stat-v">${S.records.filter(r=>r.date===today).length}</div><div class="stat-l">今日取號</div></div>
@@ -631,172 +839,71 @@ function renderHistory(){
     </div>`;
 }
 function cpNum(num,btn){
-  navigator.clipboard.writeText(num).then(()=>{btn.textContent='✓';setTimeout(()=>btn.textContent='複製',1500);})
-  .catch(()=>alert('編號：'+num));
+  navigator.clipboard.writeText(num).then(()=>{btn.textContent='✓';setTimeout(()=>btn.textContent='複製',1500);}).catch(()=>alert('編號：'+num));
+}
+async function confirmDelete(num){
+  const r=S.records.find(rec=>rec.num===num);if(!r){alert('找不到記錄');return;}
+  if(!confirm(`確認刪除？\n編號：${r.num}\n名稱：${r.name}`))return;
+  const fbKey=S.fbKeyMap[num];
+  const deleted={...r,deletedAt:new Date().toISOString(),deletedBy:'user'};
+  setSyn('sv');
+  const[ok1,ok2]=await Promise.all([fbPost(P_DELETED,deleted),fbKey?fbDelete(P_RECORDS+'/'+fbKey):Promise.resolve(true)]);
+  if(ok1&&ok2){
+    setSyn('ok');
+    const idx=S.records.findIndex(rec=>rec.num===num);
+    if(idx>=0){S.records.splice(idx,1);delete S.fbKeyMap[num];}
+    renderHistory();
+  }else{setSyn('err');alert('刪除失敗');}
 }
 
-// ── Admin: Init ───────────────────────────────────────────────────────────────
-const INIT_COUNTERS={TW113:47,KR113:5,US113:5,TW114:61,KR114:1,MIX114:2,US114:6,TW115:30,US115:3};
-const INIT_RECORDS=[
-  {num:"TW115001",country:"TW",year:"115",seq:1,category:"樣品",name:"2026年美國展",date:"2026/01/01",time:"00:00",ts:1700000001000,desc:""},
-  {num:"TW115002",country:"TW",year:"115",seq:2,category:"成本試算",name:"全家_米花鹽味(纖維粉)",date:"2026/01/01",time:"00:00",ts:1700000002000,desc:""},
-  {num:"TW115003",country:"TW",year:"115",seq:3,category:"樣品",name:"2026年美國展-1",date:"2026/01/01",time:"00:00",ts:1700000003000,desc:""},
-  {num:"TW115004",country:"TW",year:"115",seq:4,category:"樣品",name:"虎航_10克米花",date:"2026/01/01",time:"00:00",ts:1700000004000,desc:""},
-  {num:"TW115005",country:"TW",year:"115",seq:5,category:"樣品",name:"2026年美國展-2",date:"2026/01/01",time:"00:00",ts:1700000005000,desc:""},
-  {num:"TW115006",country:"TW",year:"115",seq:6,category:"樣品/規格",name:"統一生機_米花散裝出貨",date:"2026/01/01",time:"00:00",ts:1700000006000,desc:""},
-  {num:"TW115007",country:"TW",year:"115",seq:7,category:"樣品",name:"全家_FMC展示會(米片_海苔)",date:"2026/01/01",time:"00:00",ts:1700000007000,desc:""},
-  {num:"TW115008",country:"TW",year:"115",seq:8,category:"成本試算",name:"虎航_10克米花",date:"2026/01/01",time:"00:00",ts:1700000008000,desc:""},
-  {num:"TW115009",country:"TW",year:"115",seq:9,category:"成本試算",name:"山姆會員店300克米片",date:"2026/01/01",time:"00:00",ts:1700000009000,desc:""},
-  {num:"TW115010",country:"TW",year:"115",seq:10,category:"樣品",name:"山姆會員店_薄脆米片",date:"2026/01/01",time:"00:00",ts:1700000010000,desc:""},
-  {num:"TW115011",country:"TW",year:"115",seq:11,category:"樣品",name:"全聯提案_薄脆米片",date:"2026/01/01",time:"00:00",ts:1700000011000,desc:""},
-  {num:"TW115012",country:"TW",year:"115",seq:12,category:"成本試算",name:"池上農會_米花、米片",date:"2026/01/01",time:"00:00",ts:1700000012000,desc:""},
-  {num:"TW115013",country:"TW",year:"115",seq:13,category:"樣品",name:"里仁_米片_鹹蛋黃風味",date:"2026/01/01",time:"00:00",ts:1700000013000,desc:""},
-  {num:"TW115014",country:"TW",year:"115",seq:14,category:"樣品",name:"通路提品_米片",date:"2026/01/01",time:"00:00",ts:1700000014000,desc:""},
-  {num:"TW115015",country:"TW",year:"115",seq:15,category:"樣品",name:"里仁_米花_焦糖起司、焦糖奶油",date:"2026/01/01",time:"00:00",ts:1700000015000,desc:""},
-  {num:"TW115016",country:"TW",year:"115",seq:16,category:"樣品",name:"里仁_米片_泰式酸辣",date:"2026/01/01",time:"00:00",ts:1700000016000,desc:""},
-  {num:"TW115017",country:"TW",year:"115",seq:17,category:"樣品",name:"美國好市多",date:"2026/01/01",time:"00:00",ts:1700000017000,desc:""},
-  {num:"TW115018",country:"TW",year:"115",seq:18,category:"樣品",name:"7-11提樣品",date:"2026/01/01",time:"00:00",ts:1700000018000,desc:""},
-  {num:"TW115019",country:"TW",year:"115",seq:19,category:"樣品",name:"沙琪瑪_包裝袋測試",date:"2026/01/01",time:"00:00",ts:1700000019000,desc:""},
-  {num:"TW115020",country:"TW",year:"115",seq:20,category:"成本試算",name:"高蛋白米片",date:"2026/01/01",time:"00:00",ts:1700000020000,desc:""},
-  {num:"TW115021",country:"TW",year:"115",seq:21,category:"樣品",name:"2026年_泰國展",date:"2026/01/01",time:"00:00",ts:1700000021000,desc:""},
-  {num:"TW115022",country:"TW",year:"115",seq:22,category:"樣品",name:"高蛋白米片_三個口味",date:"2026/01/01",time:"00:00",ts:1700000022000,desc:""},
-  {num:"TW115023",country:"TW",year:"115",seq:23,category:"樣品",name:"DAISHO米片 DAISHO米米花",date:"2026/01/01",time:"00:00",ts:1700000023000,desc:""},
-  {num:"TW115024",country:"TW",year:"115",seq:24,category:"樣品",name:"7-11米片提案",date:"2026/01/01",time:"00:00",ts:1700000024000,desc:""},
-  {num:"TW115025",country:"TW",year:"115",seq:25,category:"成本試算",name:"好市多_高蛋白米片",date:"2026/01/01",time:"00:00",ts:1700000025000,desc:""},
-  {num:"TW115026",country:"TW",year:"115",seq:26,category:"成本試算",name:"里仁_米花焦糖起司",date:"2026/01/01",time:"00:00",ts:1700000026000,desc:""},
-  {num:"TW115027",country:"TW",year:"115",seq:27,category:"樣品",name:"Daisho米片聯名",date:"2026/01/01",time:"00:00",ts:1700000027000,desc:""},
-  {num:"TW115028",country:"TW",year:"115",seq:28,category:"樣品",name:"2026年台北食品展_6月",date:"2026/01/01",time:"00:00",ts:1700000028000,desc:""},
-  {num:"TW115029",country:"TW",year:"115",seq:29,category:"樣品",name:"薑麻園代工",date:"2026/01/01",time:"00:00",ts:1700000029000,desc:""},
-  {num:"TW115030",country:"TW",year:"115",seq:30,category:"樣品",name:"星巴克_米片_35克",date:"2026/01/01",time:"00:00",ts:1700000030000,desc:""},
-  {num:"US115001",country:"US",year:"115",seq:1,category:"成本試算",name:"美國好市多_300克米花",date:"2026/01/01",time:"00:00",ts:1700000031000,desc:""},
-  {num:"US115002",country:"US",year:"115",seq:2,category:"成本試算",name:"美國好市多_60克*10包/彩箱 米花",date:"2026/01/01",time:"00:00",ts:1700000032000,desc:""},
-  {num:"US115003",country:"US",year:"115",seq:3,category:"成本試算",name:"美國好市多_高蛋白米片 50克*8包/彩箱",date:"2026/01/01",time:"00:00",ts:1700000033000,desc:""},
-];
-
-function ilog(msg,cls){
-  const el=document.getElementById('init-log');if(!el)return;
-  el.style.display='block';
-  el.innerHTML+=`<span class="${cls||''}">${escH(msg)}</span>\n`;
-  el.scrollTop=el.scrollHeight;
-}
-
-function renderAdmInit(){
+// ── 月報頁面 ──────────────────────────────────────
+function renderAdmMonthly(){
+  const now=new Date();
+  const yr=getRocYear();
+  const month=now.getMonth()+1;
+  const adYear=parseInt(yr)+1911;
+  const monthRecs=S.records.filter(r=>{
+    if(r.year!==yr)return false;
+    const d=new Date(r.ts||0);
+    return d.getMonth()+1===month;
+  });
   document.getElementById('main-content').innerHTML=`
-    <div class="card">
-      <div class="card-title">🗃️ 從控管表匯入歷史資料</div>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.7">
-        此功能將控管表現有取號記錄一次性寫入 Firebase。<br>
-        <strong style="color:var(--red)">⚠️ 僅需執行一次</strong>，重複執行只會重寫計數器，不會新增重複記錄。
-      </p>
-      <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-s);padding:10px 12px;font-size:12px;margin-bottom:12px">
-        <div style="font-weight:700;color:var(--accent);margin-bottom:6px">將寫入計數器：</div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;font-family:monospace">
-          <span>TW113 → 047</span><span>TW114 → 061</span><span>TW115 → 030</span>
-          <span>US113 → 005</span><span>US114 → 006</span><span>US115 → 003</span>
-          <span>KR113 → 005</span><span>KR114 → 001</span>
-        </div>
-        <div style="font-weight:700;color:var(--accent);margin-top:8px">115年取號記錄 33 筆（TW×30、US×3）</div>
+    <div class="monthly-panel">
+      <div class="monthly-title">🐠 月報自動產出</div>
+      <div class="monthly-sub">
+        小福會讀取本月（${adYear}年${month}月）的取號數據與全年專案狀態，自動產出月報摘要，並可下載 Excel 格式。
       </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px">
+        <div class="stat"><div class="stat-v" style="color:var(--purple)">${monthRecs.length}</div><div class="stat-l">本月取號</div></div>
+        <div class="stat"><div class="stat-v">${S.records.filter(r=>r.year===yr).length}</div><div class="stat-l">年度累計</div></div>
+        <div class="stat"><div class="stat-v">${adYear}/${month}</div><div class="stat-l">月份</div></div>
+      </div>
+      <button class="monthly-btn" id="monthly-btn" onclick="generateMonthlyReport()">
+        🐠 一鍵產出${adYear}年${month}月月報
+      </button>
+      <div class="monthly-status" id="monthly-status"></div>
+      <div id="monthly-result"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">📊 歷史月報快速下載</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px">直接下載 Excel，不含 AI 摘要</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn-p" id="init-btn" onclick="doInit()" style="flex:1;min-width:120px">🚀 執行初始化</button>
-        <button class="btn-s" onclick="checkInitStatus()">🔍 檢查現況</button>
-      </div>
-      <div class="init-log" id="init-log"></div>
-    </div>`;
-}
-
-async function checkInitStatus(){
-  const el=document.getElementById('init-log');if(!el)return;
-  el.style.display='block';el.innerHTML='';
-  ilog('🔍 讀取 Firebase 現況...','log-info');
-  const c=await fbGet(P_COUNTERS);
-  if(!c){ilog('❌ 無法連線或尚無資料','log-err');return;}
-  ilog('目前計數器：','log-info');
-  Object.entries(c).sort().forEach(([k,v])=>ilog(`  ${k} → ${String(v).padStart(3,'0')} 號`,'log-ok'));
-  const r=await fbGet(P_RECORDS);
-  ilog(`記錄筆數：${r?Object.keys(r).length:0} 筆`,'log-info');
-}
-
-async function doInit(){
-  const btn=document.getElementById('init-btn');if(!btn)return;
-  btn.disabled=true;btn.textContent='初始化中...';
-  const el=document.getElementById('init-log');if(el){el.style.display='block';el.innerHTML='';}
-  try{
-    ilog('① 寫入計數器...','log-info');
-    const ok=await fbSet(P_COUNTERS,INIT_COUNTERS);
-    if(!ok)throw new Error('計數器寫入失敗');
-    Object.entries(INIT_COUNTERS).forEach(([k,v])=>ilog(`  ✓ ${k} → ${String(v).padStart(3,'0')}`,'log-ok'));
-    S.counters={...INIT_COUNTERS};
-    ilog('\n② 寫入 115年取號記錄（33筆）...','log-info');
-    for(let i=0;i<INIT_RECORDS.length;i++){
-      await fbPost(P_RECORDS,INIT_RECORDS[i]);
-      ilog(`  ✓ ${INIT_RECORDS[i].num}  ${INIT_RECORDS[i].name}`,'log-ok');
-    }
-    ilog('\n✅ 初始化完成！','log-ok');
-    if(btn){btn.textContent='✅ 已完成';btn.style.background='var(--green)';}
-    const raw=await fbGet(P_RECORDS);
-    if(raw&&typeof raw==='object')S.records=Object.values(raw).sort((a,b)=>(b.ts||0)-(a.ts||0));
-    S.fbLoaded=true;
-  }catch(e){
-    ilog('\n❌ 錯誤：'+e.message,'log-err');
-    if(btn){btn.disabled=false;btn.textContent='重新執行';}
-  }
-}
-
-// ── Admin: Counters ───────────────────────────────────────────────────────────
-function renderAdmCounters(){
-  document.getElementById('main-content').innerHTML=`
-    <div class="card">
-      <div class="card-title">🔢 流水號現況</div>
-      <button class="btn-s" onclick="loadCounterTable()" style="margin-bottom:10px">🔄 重新讀取</button>
-      <div id="counter-table-wrap"><div class="empty">請點擊「重新讀取」</div></div>
-      <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:12px">
-        <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px">手動修正計數器</div>
-        <div class="row2" style="margin-bottom:8px">
-          <div class="field" style="margin:0"><label>鍵值（如 TW115）</label><input type="text" id="adj-key" placeholder="TW115" style="text-transform:uppercase"></div>
-          <div class="field" style="margin:0"><label>設定為（數字）</label><input type="number" id="adj-val" placeholder="30" min="0"></div>
-        </div>
-        <button class="btn-s" onclick="adjustCounter()">更新</button>
-        <span id="adj-msg" style="font-size:12px;color:var(--green);margin-left:10px;display:none">✓ 已更新</span>
+        ${[1,2,3,4,5].map(m=>{
+          const cnt=S.records.filter(r=>{
+            if(r.year!==yr)return false;
+            const d=new Date(r.ts||0);return d.getMonth()+1===m;
+          }).length;
+          return cnt>0?`<button onclick="downloadMonthlyExcel('${yr}','${m}')" style="padding:6px 12px;border:1px solid var(--border-s);border-radius:var(--radius-s);background:var(--surface);font-family:inherit;font-size:12px;cursor:pointer;color:var(--text)">${adYear}/${m}月（${cnt}筆）</button>`:'';
+        }).join('')}
       </div>
     </div>`;
-  loadCounterTable();
 }
 
-async function loadCounterTable(){
-  const wrap=document.getElementById('counter-table-wrap');if(!wrap)return;
-  wrap.innerHTML='<div class="loading-box"><div class="loading-spinner"></div><div>讀取中...</div></div>';
-  const c=await fbGet(P_COUNTERS);
-  if(!c){wrap.innerHTML='<div class="empty">無法讀取，請確認 Firebase 連線</div>';return;}
-  S.counters=c;
-  const rows=Object.entries(c).sort().map(([k,v])=>`
-    <tr>
-      <td><span class="num-badge" style="font-size:12px">${k}</span></td>
-      <td style="font-weight:700">${String(v).padStart(3,'0')}</td>
-      <td style="color:var(--muted);font-size:12px">下次：${k}_${String(v+1).padStart(3,'0')}</td>
-    </tr>`).join('');
-  wrap.innerHTML=`<table class="counter-table"><thead><tr><th>國別+年度</th><th>目前最高</th><th>說明</th></tr></thead><tbody>${rows}</tbody></table>`;
-}
-
-async function adjustCounter(){
-  const k=document.getElementById('adj-key')?.value.trim().toUpperCase();
-  const v=parseInt(document.getElementById('adj-val')?.value);
-  if(!k||isNaN(v)||v<0){alert('請填入正確的鍵值與數字');return;}
-  const ok=await fbPatch(P_COUNTERS,{[k]:v});
-  if(ok){
-    S.counters[k]=v;
-    const msg=document.getElementById('adj-msg');
-    if(msg){msg.style.display='inline';setTimeout(()=>msg.style.display='none',2500);}
-    loadCounterTable();
-  }else alert('更新失敗');
-}
-
-// ── Admin: Options ────────────────────────────────────────────────────────────
+// ── 選項管理 ─────────────────────────────────────
 function renderAdmOptions(){
   document.getElementById('main-content').innerHTML=`
     <div class="card">
       <div class="card-title">🌏 新增國別選項</div>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:8px">新增後同步到所有裝置的下拉選單</p>
       <div class="add-opt-row">
         <input class="add-opt-input" id="add-country-code" placeholder="代碼，如 EU" maxlength="6" style="text-transform:uppercase;max-width:80px">
         <input class="add-opt-input" id="add-country-label" placeholder="說明，如：歐洲" maxlength="20">
@@ -804,25 +911,23 @@ function renderAdmOptions(){
       </div>
       <div id="custom-country-list" style="margin-top:10px">${
         S.options.countries.length
-          ? S.options.countries.map(c=>`<span style="display:inline-flex;gap:4px;background:var(--accent-l);color:var(--accent-t);font-size:12px;padding:3px 10px;border-radius:20px;margin:2px 2px 0 0">${escH(c.code)} ${escH(c.label)}</span>`).join('')
+          ? S.options.countries.map(c=>`<span style="display:inline-flex;gap:4px;background:var(--accent-l);color:var(--accent-t);font-size:12px;padding:3px 10px;border-radius:20px;margin:2px">${escH(c.code)} ${escH(c.label)}</span>`).join('')
           : '<p style="font-size:12px;color:var(--hint)">尚無自訂國別</p>'
       }</div>
     </div>
     <div class="card">
       <div class="card-title">📂 新增項目選項</div>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:8px">新增後同步到所有裝置的下拉選單</p>
       <div class="add-opt-row">
         <input class="add-opt-input" id="add-cat-input" placeholder="項目名稱，如：價格試算" maxlength="20">
         <button class="add-opt-btn" onclick="addCustomCategory()">＋新增</button>
       </div>
       <div id="custom-cat-list" style="margin-top:10px">${
         S.options.categories.length
-          ? S.options.categories.map(v=>`<span style="display:inline-flex;gap:4px;background:var(--blue-l);color:var(--blue);font-size:12px;padding:3px 10px;border-radius:20px;margin:2px 2px 0 0">${escH(v)}</span>`).join('')
+          ? S.options.categories.map(v=>`<span style="display:inline-flex;gap:4px;background:var(--blue-l);color:var(--blue);font-size:12px;padding:3px 10px;border-radius:20px;margin:2px">${escH(v)}</span>`).join('')
           : '<p style="font-size:12px;color:var(--hint)">尚無自訂項目</p>'
       }</div>
     </div>`;
 }
-
 async function addCustomCountry(){
   const code=document.getElementById('add-country-code')?.value.trim().toUpperCase();
   const label=document.getElementById('add-country-label')?.value.trim();
@@ -832,7 +937,6 @@ async function addCustomCountry(){
   await fbSet(P_OPTIONS+'/countries',S.options.countries);
   renderAdmOptions();
 }
-
 async function addCustomCategory(){
   const val=document.getElementById('add-cat-input')?.value.trim();
   if(!val){alert('請輸入項目名稱');return;}
@@ -842,635 +946,157 @@ async function addCustomCategory(){
   renderAdmOptions();
 }
 
-// ── Firebase load ─────────────────────────────────────────────────────────────
-// ── Firebase path for project details ─────────────────────────────────────────
-const P_PROJ = 'prod_req/proj_details';
+// ── 刪除記錄管理 ─────────────────────────────────
+async function renderAdmDeleted(){
+  document.getElementById('main-content').innerHTML=`<div class="card"><div class="card-title">🗑️ 刪除記錄</div><div id="deleted-list"><div class="loading-box"><div class="loading-spinner"></div><div>讀取中...</div></div></div></div>`;
+  const raw=await fbGet(P_DELETED);
+  const list=document.getElementById('deleted-list');if(!list)return;
+  if(!raw||!Object.keys(raw).length){list.innerHTML='<div class="empty">目前無刪除記錄</div>';return;}
+  const entries=Object.entries(raw).sort((a,b)=>(b[1].deletedAt||'')>(a[1].deletedAt||'')?1:-1);
+  list.innerHTML=`<table class="history-table"><thead><tr><th>編號</th><th>名稱</th><th>取號人</th><th>刪除時間</th><th>操作</th></tr></thead><tbody>${
+    entries.map(([k,r])=>`<tr>
+      <td><span class="num-badge">${escH(r.num)}</span></td>
+      <td style="font-size:12px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escH(r.name)}</td>
+      <td style="font-size:12px">${escH(r.requester||'—')}</td>
+      <td style="font-size:11px;color:var(--muted)">${r.deletedAt?r.deletedAt.slice(0,16).replace('T',' '):'—'}</td>
+      <td style="white-space:nowrap">
+        <button class="copy-btn" style="border-color:#9FC9AA;color:var(--green)" onclick="restoreRecord('${k}')">復原</button>
+        <button class="copy-btn" style="border-color:#E8A0A0;color:var(--red)" onclick="permDelete('${k}','${escH(r.num)}')">永久刪除</button>
+      </td>
+    </tr>`).join('')
+  }</tbody></table>`;
+}
+async function restoreRecord(fbKey){
+  const raw=await fbGet(P_DELETED+'/'+fbKey);if(!raw){alert('找不到記錄');return;}
+  if(!confirm(`確認復原編號 ${raw.num}？`))return;
+  const restored={...raw};delete restored.deletedAt;delete restored.deletedBy;
+  const[ok1,ok2]=await Promise.all([fbPost(P_RECORDS,restored),fbDelete(P_DELETED+'/'+fbKey)]);
+  if(ok1&&ok2){S.records.unshift(restored);renderAdmDeleted();}else alert('復原失敗');
+}
+async function permDelete(fbKey,num){
+  if(!confirm(`⚠️ 確認永久刪除 ${num}？此操作無法復原！`))return;
+  const ok=await fbDelete(P_DELETED+'/'+fbKey);
+  if(ok)renderAdmDeleted();else alert('刪除失敗');
+}
 
+// ── 專案控管（簡化版） ───────────────────────────
+function renderAdmProj(){
+  const yr=getRocYear();
+  const yearRec=S.records.filter(r=>r.year===yr).sort((a,b)=>(a.seq||0)-(b.seq||0));
+  if(!yearRec.length){document.getElementById('main-content').innerHTML='<div class="empty">尚無本年度取號記錄</div>';return;}
+  const catGroups={};
+  yearRec.forEach(r=>{if(!catGroups[r.category])catGroups[r.category]=[];catGroups[r.category].push(r);});
+  const STATUS_COLOR={'進行中':'var(--amber-l)','已完成':'var(--green-l)','已上市':'var(--green-l)','不執行':'var(--red-l)','暫緩':'var(--red-l)','尚未開始':'var(--blue-l)','結案':'var(--bg)'};
+  const STATUS_TC={'進行中':'var(--amber)','已完成':'var(--green)','已上市':'var(--green)','不執行':'var(--red)','暫緩':'var(--red)','尚未開始':'var(--blue)','結案':'var(--muted)'};
+  const html=Object.entries(catGroups).map(([cat,items])=>`
+    <div class="proj-sec">
+      <div class="proj-sec-hdr" onclick="togPS('${cat.replace(/[^a-z0-9]/gi,'-')}')">
+        <span class="proj-sec-arr op" id="psa-${cat.replace(/[^a-z0-9]/gi,'-')}">▶</span>
+        <span class="proj-sec-t">${escH(cat)}</span>
+        <span class="proj-sec-cnt">${items.length} 項</span>
+      </div>
+      <div class="proj-sec-body op" id="psb-${cat.replace(/[^a-z0-9]/gi,'-')}">
+        ${items.map(r=>{
+          const d=S.projDetails[r.num]||{};
+          const st=d.status||'進行中';
+          return`<div class="pcard">
+            <div class="pcard-hdr">
+              <span class="pcard-num">${escH(r.num)}</span>
+              <span class="pcard-title">${escH(r.name)}</span>
+              <span class="pcard-status" style="background:${STATUS_COLOR[st]||'var(--amber-l)'};color:${STATUS_TC[st]||'var(--amber)'}">${st}</span>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`).join('');
+  document.getElementById('main-content').innerHTML=`
+    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+      <button onclick="downloadExcelYear('${yr}')" style="padding:8px 16px;border:none;border-radius:var(--radius-s);background:var(--accent);color:#fff;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">📥 下載 ${parseInt(yr)+1911}年控管表</button>
+    </div>
+    ${html}`;
+}
+function togPS(id){
+  const b=document.getElementById('psb-'+id),a=document.getElementById('psa-'+id);
+  if(!b)return;const op=b.classList.toggle('op');a.classList.toggle('op',op);
+}
+async function downloadExcelYear(yr){
+  const rawP=await fbGet(P_PROJ);
+  if(rawP)S.projDetails={...rawP};
+  const adYear=parseInt(yr)+1911;
+  const records=S.records.filter(r=>r.year===yr).sort((a,b)=>(a.seq||0)-(b.seq||0));
+  if(!records.length){alert(adYear+'年度尚無取號記錄');return;}
+  const wb=XLSX.utils.book_new();
+  const headers=['項次','編號','項目','名稱','取號人','需求內容','進度說明','期望完成日','負責人','狀態','備註'];
+  const rows=records.map((r,i)=>{
+    const d=S.projDetails[r.num]||{};
+    return[i+1,r.num,r.category,r.name,r.requester||'',d.reqContent||r.desc||'',d.progress||'',d.launch||'',d.owner||'',d.status||'',d.note||''];
+  });
+  const ws=XLSX.utils.aoa_to_sheet([[`${adYear}年度產品專案控管表`,...Array(10).fill('')],headers,...rows]);
+  ws['!cols']=[{wch:6},{wch:12},{wch:12},{wch:30},{wch:8},{wch:36},{wch:40},{wch:10},{wch:8},{wch:10},{wch:12}];
+  ws['!merges']=[{s:{r:0,c:0},e:{r:0,c:10}}];
+  XLSX.utils.book_append_sheet(wb,ws,adYear+'年專案總表');
+  const dateStr=new Date().toLocaleDateString('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit'}).replace(/\//g,'');
+  XLSX.writeFile(wb,'研發專案控管表_'+adYear+'_'+dateStr+'.xlsx');
+}
+
+// ── 選單、PIN、切換 ──────────────────────────────
+function openMenu(){document.getElementById('menu-overlay').classList.add('open');}
+function closeMenu(){document.getElementById('menu-overlay').classList.remove('open');}
+function closeMenuIfOutside(e){if(e.target===document.getElementById('menu-overlay'))closeMenu();}
+function menuGoTab(tab){closeMenu();if(S.adminOK)exitAdmin();S.tab=tab;render();scrollTo(0,0);}
+function menuAdminClick(){if(S.adminOK){closeMenu();exitAdmin();return;}closeMenu();openPin();}
+function openPin(){document.getElementById('pin-input').value='';document.getElementById('pin-err').textContent='';document.getElementById('pin-overlay').classList.add('open');setTimeout(()=>document.getElementById('pin-input').focus(),100);}
+function closePin(){document.getElementById('pin-overlay').classList.remove('open');}
+function verifyPin(){
+  const v=document.getElementById('pin-input').value;
+  if(v===ADMIN_PIN){closePin();S.adminOK=true;S.tab='adm-proj';if(!S.fbLoaded)loadFirebase().then(()=>render());else render();}
+  else{document.getElementById('pin-err').textContent='密碼錯誤';document.getElementById('pin-input').value='';document.getElementById('pin-input').focus();}
+}
+function exitAdmin(){S.adminOK=false;S.tab='new';render();scrollTo(0,0);}
+function switchUserTab(tab){S.tab=tab;render();}
+function switchAdminTab(tab){S.tab=tab;render();scrollTo(0,0);}
+
+// ── Render ────────────────────────────────────────
+function render(){
+  const userNav=document.getElementById('user-nav');
+  const adminNav=document.getElementById('admin-nav');
+  const adminBar=document.getElementById('admin-bar');
+  if(S.adminOK){
+    userNav.style.display='none';adminNav.style.display='flex';adminBar.classList.add('show');
+    ['adm-proj','adm-monthly','adm-deleted','adm-options'].forEach(t=>{
+      document.getElementById('nav-'+t)?.classList.toggle('active',S.tab===t);
+    });
+    if(S.tab==='adm-proj')renderAdmProj();
+    else if(S.tab==='adm-monthly')renderAdmMonthly();
+    else if(S.tab==='adm-deleted')renderAdmDeleted();
+    else if(S.tab==='adm-options')renderAdmOptions();
+  }else{
+    userNav.style.display='flex';adminNav.style.display='none';adminBar.classList.remove('show');
+    ['new','history'].forEach(t=>{document.getElementById('nav-'+t)?.classList.toggle('active',S.tab===t);});
+    if(S.tab==='new')renderNew();
+    else if(S.tab==='history')renderHistory();
+  }
+}
+
+// ── Firebase 載入 ─────────────────────────────────
 async function loadFirebase(){
   setSyn('sv');
   try{
     const[rawC,rawR,rawO,rawP]=await Promise.all([fbGet(P_COUNTERS),fbGet(P_RECORDS),fbGet(P_OPTIONS),fbGet(P_PROJ)]);
     S.counters=rawC&&typeof rawC==='object'?rawC:{};
-    S.records=rawR&&typeof rawR==='object'?Object.values(rawR).sort((a,b)=>(b.ts||0)-(a.ts||0)):[];
-    if(rawO){
-      S.options.countries =Array.isArray(rawO.countries) ?rawO.countries :[];
-      S.options.categories=Array.isArray(rawO.categories)?rawO.categories:[];
-    }
+    if(rawR&&typeof rawR==='object'){
+      S.fbKeyMap={};
+      S.records=Object.entries(rawR).map(([k,v])=>{S.fbKeyMap[v.num]=k;return v;}).sort((a,b)=>(b.ts||0)-(a.ts||0));
+    }else S.records=[];
+    if(rawO){S.options.countries=Array.isArray(rawO.countries)?rawO.countries:[];S.options.categories=Array.isArray(rawO.categories)?rawO.categories:[];}
     S.projDetails=rawP&&typeof rawP==='object'?rawP:{};
-    S.fbLoaded=true;
-    setSyn('ok');
+    S.fbLoaded=true;setSyn('ok');
   }catch(e){setSyn('err');}
 }
 
-// ── 專案控管（卡片式 + 年度/季度）────────────────────────────────────────────
-const STATUS_OPTS=['進行中','尚未開始','已完成','已上市','不執行','結案','持續','暫緩','待確認'];
-const STATUS_COLOR={
-  '進行中':'var(--amber-l)','尚未開始':'var(--blue-l)','已完成':'var(--green-l)',
-  '已上市':'var(--green-l)','不執行':'var(--red-l)','結案':'var(--bg)',
-  '持續':'var(--accent-l)','暫緩':'var(--red-l)','待確認':'#FEF3E2'
-};
-const STATUS_TC={
-  '進行中':'var(--amber)','尚未開始':'var(--blue)','已完成':'var(--green)',
-  '已上市':'var(--green)','不執行':'var(--red)','結案':'var(--muted)',
-  '持續':'var(--accent-t)','暫緩':'var(--red)','待確認':'var(--amber)'
-};
-const CAT_GROUPS=['樣品','樣品/規格','餅體','成本試算','新品/成本試算','系統認證'];
-
-// State for proj view
-let projYear=getRocYear();   // 目前選擇的年度（民國年字串，如 '115'）
-let projQuarter=0;           // 0=全年, 1-4=第幾季
-let projCat='';              // 篩選類別，空字串=全部
-let projStatusFilter='';     // 狀態快捷篩選：'done'|'active'|'overdue'|''
-
-// 取號日期屬於哪一季（優先用 date 字串，fallback 用 ts）
-function getQuarter(r){
-  // date 格式: '2026/01/01' or '2026/1/1'
-  let month=0,day=0;
-  if(r.date){
-    const parts=r.date.replace(/-/g,'/').split('/');
-    if(parts.length>=3){month=parseInt(parts[1]);day=parseInt(parts[2]);}
-    else if(parts.length>=2){month=parseInt(parts[1]);}
-  }
-  // 初始化時用的假日期 (月=1,日=1且time=00:00) → 無法判斷季度，歸 0
-  if(month===1&&day===1&&(!r.time||r.time==='00:00')) return 0;
-  if(!month&&r.ts){month=new Date(r.ts).getMonth()+1;}
-  if(!month) return 0;
-  return month<=3?1:month<=6?2:month<=9?3:4;
-}
-
-// 年度清單（從 records 取出所有年份，並補上 counters 裡有的年份）
-function getYears(){
-  const ys=new Set();
-  S.records.forEach(r=>{ if(r.year) ys.add(r.year); });
-  // 也從 counters key 補充（格式如 TW115 → 115）
-  Object.keys(S.counters).forEach(k=>{
-    const m=k.match(/^[A-Z]+(\d{3})$/);
-    if(m) ys.add(m[1]);
-  });
-  return Array.from(ys).sort((a,b)=>Number(b)-Number(a));
-}
-
-function rocToAD(yr){return parseInt(yr)+1911;}
-
-function projStatusClass(s){
-  if(!s||s==='尚未開始') return 'nb-pend';
-  if(s==='進行中'||s==='持續') return 'nb-prog';
-  if(s==='已完成'||s==='已上市') return 'nb-done';
-  if(s==='不執行'||s==='暫緩'||s==='結案') return 'nb-stop';
-  return 'nb-def';
-}
-
-// ── 後台：專案控管（含下載）────────────────────────────────────────────────
-function renderAdmProj(){
-  // 後台專案控管 = 一般專案控管，共用同一個 projYear/projQuarter/projCat 狀態
-  renderProj();
-  // 在頁面頂部加入額外的下載區塊
-  const mc=document.getElementById('main-content');
-  if(!mc)return;
-  const dlDiv=document.createElement('div');
-  dlDiv.id='adm-dl-bar';
-  dlDiv.style.cssText='background:var(--accent-l);border:1px solid #C8D8F0;border-radius:var(--radius-s);padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap';
-  const years=getYears();
-  const yrBtns=years.map(y=>`
-    <button onclick="downloadExcelYear('${y}')"
-      style="padding:5px 12px;border:1px solid var(--accent);border-radius:var(--radius-s);background:var(--surface);font-family:inherit;font-size:12px;cursor:pointer;color:var(--accent);font-weight:700">
-      📥 ${parseInt(y)+1911}年（${S.records.filter(r=>r.year===y).length}筆）
-    </button>`).join('');
-  dlDiv.innerHTML=`<span style="font-size:12px;font-weight:700;color:var(--accent-t)">📥 下載控管表：</span>${yrBtns}
-    <button onclick="refreshAndExport()" style="padding:5px 10px;border:1px solid var(--border-s);border-radius:var(--radius-s);background:#fff;font-family:inherit;font-size:11px;cursor:pointer;color:var(--muted);margin-left:auto">🔄 重新讀取後下載</button>
-    <div id="export-msg" style="font-size:11px;display:none;width:100%"></div>`;
-  mc.insertBefore(dlDiv, mc.firstChild);
-}
-
-function renderProj(){
-  const years=getYears();
-  if(!years.length){
-    document.getElementById('main-content').innerHTML='<div class="empty">尚無取號記錄</div>';
-    return;
-  }
-  // 確保 projYear 在可用年份中
-  if(!years.includes(projYear)) projYear=years[0];
-
-  // 全年記錄（當年度）
-  const yearRec=S.records.filter(r=>r.year===projYear).sort((a,b)=>(a.seq||0)-(b.seq||0)||(a.country||"").localeCompare(b.country||""));
-
-  // 季度篩選
-  // projQuarter=0(全年)：顯示全部
-  // projQuarter=1-4：顯示該季 + 無法判斷季度的記錄（假日期，確保不遺漏）
-  const filtered=projQuarter===0
-    ? yearRec
-    : yearRec.filter(r=>{ const q=getQuarter(r); return q===projQuarter||q===0; });
-
-  // 國別 / 狀態篩選
-  const fc=document.getElementById('proj-fc')?.value||'';
-  const fs=document.getElementById('proj-fs')?.value||'';
-  let shown=filtered;
-  if(fc) shown=shown.filter(r=>r.country===fc);
-  if(fs) shown=shown.filter(r=>(S.projDetails[r.num]?.status||'')===fs);
-
-  // ── 統計（全年度）──
-  const counts={prog:0,done:0,other:0};
-  yearRec.forEach(r=>{
-    const s=S.projDetails[r.num]?.status||'';
-    if(!s||s==='進行中'||s==='持續'||s==='尚未開始'||s==='待確認') counts.prog++;
-    else if(s==='已完成'||s==='已上市') counts.done++;
-    else counts.other++;
-  });
-
-  // ── 季度按鈕計數 ──
-  const qCnt=[0,0,0,0,0]; // idx 0=全年, 1-4=各季
-  yearRec.forEach(r=>{ const q=getQuarter(r); qCnt[0]++; if(q>=1&&q<=4)qCnt[q]++; });
-  // 季度篩選：quarter=0 的記錄（假日期）歸入「全年」，各季不計入
-
-  // ── 年度按鈕 HTML ──
-  // 年度按鈕計數：優先用 records 筆數，無 records 則用 counters 最高流水號合計
-  function yearCount(y){
-    const rc=S.records.filter(r=>r.year===y).length;
-    if(rc>0) return rc;
-    // 從 counters 計算（如 TW115:30, US115:3 → 33）
-    return Object.entries(S.counters)
-      .filter(([k])=>k.endsWith(y))
-      .reduce((s,[,v])=>s+v,0);
-  }
-  const yearBtns=years.map(y=>`
-    <button class="wt${y===projYear?' on':''}" onclick="setProjYear('${y}')">
-      <span style="font-size:12px;font-weight:700">${rocToAD(y)}年</span>
-      <span class="wt-sub">民國${y}年</span>
-      <span class="wt-n">${yearCount(y)}</span>
-    </button>`).join('');
-
-  // ── 季度按鈕 HTML ──
-  const QLabels=['全年','第一季','第二季','第三季','第四季'];
-  const QSubs=['','1–3月','4–6月','7–9月','10–12月'];
-  const quarterBtns=[0,1,2,3,4].map(q=>`
-    <button class="wt${projQuarter===q?' on':''}" onclick="setProjQuarter(${q})">
-      <span style="font-size:12px;font-weight:700">${QLabels[q]}</span>
-      <span class="wt-sub">${QSubs[q]}</span>
-      <span class="wt-n">${qCnt[q]}</span>
-    </button>`).join('');
-
-  // ── 類別清單（從當年度全部記錄取，不受篩選影響）──
-  const allCats=[...new Set(yearRec.map(r=>r.category))].sort((a,b)=>{
-    const ia=CAT_GROUPS.indexOf(a),ib=CAT_GROUPS.indexOf(b);
-    return (ia<0?99:ia)-(ib<0?99:ib);
-  });
-  // 若 projCat 不在清單中則清空
-  if(projCat&&!allCats.includes(projCat)) projCat='';
-
-  // ── 逾期判斷：有預計上市日且日期已過，且狀態非已完成/已上市/結案/不執行 ──
-  const doneStatus=new Set(['已完成','已上市','結案','不執行']);
-  const activeStatus=new Set(['進行中','持續','尚未開始','待確認']);
-  const today=new Date(); today.setHours(0,0,0,0);
-  function isOverdue(r){
-    const d=S.projDetails[r.num]||{};
-    if(doneStatus.has(d.status)) return false;
-    if(!d.launch) return false;
-    // 解析 launch，格式可能是 2026/08 或 2026/08/31
-    const parts=d.launch.replace(/-/g,'/').split('/');
-    if(parts.length<2) return false;
-    const y=parseInt(parts[0]),m=parseInt(parts[1])-1;
-    const day=parts[2]?parseInt(parts[2]):1;
-    const launchDate=new Date(y,m,day);
-    return launchDate<today;
-  }
-  function isActive(r){
-    const d=S.projDetails[r.num]||{};
-    const st=d.status||'';
-    return activeStatus.has(st)||st===''; // 未設定視為進行中
-  }
-  function isDone(r){
-    const d=S.projDetails[r.num]||{};
-    return doneStatus.has(d.status||'');
-  }
-
-  // 狀態快捷篩選
-  let shownByStatus=shown;
-  if(projStatusFilter==='done')    shownByStatus=shown.filter(r=>isDone(r));
-  else if(projStatusFilter==='active')  shownByStatus=shown.filter(r=>isActive(r));
-  else if(projStatusFilter==='overdue') shownByStatus=shown.filter(r=>isOverdue(r));
-
-  // 類別篩選
-  const shownByCat=projCat?shownByStatus.filter(r=>r.category===projCat):shownByStatus;
-  const displayCats=projCat
-    ?[projCat]
-    :[...new Set(shownByCat.map(r=>r.category))].sort((a,b)=>{
-        const ia=CAT_GROUPS.indexOf(a),ib=CAT_GROUPS.indexOf(b);
-        return (ia<0?99:ia)-(ib<0?99:ib);
-      });
-
-  // 各狀態計數（for 按鈕 badge）
-  const cntDone=shown.filter(r=>isDone(r)).length;
-  const cntActive=shown.filter(r=>isActive(r)).length;
-  const cntOverdue=shown.filter(r=>isOverdue(r)).length;
-
-  // 類別按鈕（計數依狀態篩選後結果）
-  const catBtns=[''].concat(allCats).map(cat=>{
-    const cnt=cat?shownByStatus.filter(r=>r.category===cat).length:shownByStatus.length;
-    const on=cat===projCat;
-    return `<button onclick="setProjCat('${escH(cat)}')"
-      style="padding:5px 10px;border:1px solid ${on?'var(--accent)':'var(--border-s)'};border-radius:20px;
-      background:${on?'var(--accent)':'var(--surface)'};color:${on?'#fff':'var(--text)'};
-      font-family:inherit;font-size:12px;font-weight:${on?'700':'400'};cursor:pointer;white-space:nowrap;
-      display:inline-flex;align-items:center;gap:4px">
-      ${cat||'全部類別'}
-      <span style="font-size:10px;padding:1px 5px;border-radius:20px;background:${on?'rgba(255,255,255,.25)':'var(--border)'};color:${on?'#fff':'var(--muted)'}">${cnt}</span>
-    </button>`;
-  }).join('');
-
-  const secHtml=displayCats.map(cat=>{
-    const items=shownByCat.filter(r=>r.category===cat).sort((a,b)=>a.seq-b.seq);
-    const secId='ps-'+cat.replace(/[^a-zA-Z0-9]/g,'-');
-    const cards=items.map(r=>{
-      const d=S.projDetails[r.num]||{};
-      const st=d.status||'';
-      const isDone=st==='已完成'||st==='已上市'||st==='結案'||st==='不執行';
-      const sc=projStatusClass(st);
-      const updLines=(d.progress||'').split('\n').filter(Boolean);
-      return `<div class="pcard${isDone?' pstat-done':''}" id="pc-${r.num}">
-  <div class="pcard-hdr" onclick="togPCard('${r.num}')">
-    <span class="pcard-arr" id="pca-${r.num}">▶</span>
-    <div class="pcard-info">
-      <div class="pcard-title-row">
-        <span class="pcard-num">${escH(r.num)}</span>
-        <span class="pcard-title">${escH(r.name)}</span>
-      </div>
-      <div style="display:flex;gap:5px;margin-top:3px;flex-wrap:wrap">
-        <span class="pcard-status ${st?sc:'nb-prog'}" style="background:${STATUS_COLOR[st||'進行中']||'var(--amber-l)'};color:${STATUS_TC[st||'進行中']||'var(--amber)'}">${st||'進行中'}</span>
-        ${d.owner?`<span class="pcard-date">👤 ${escH(d.owner)}</span>`:''}
-        ${d.launch?`<span class="pcard-date">📅 ${escH(d.launch)}</span>`:''}
-        ${r.requester?`<span class="pcard-date">取號：${escH(r.requester)}</span>`:''}
-      </div>
-    </div>
-    <span class="pcard-saved" id="psv-${r.num}">✓ 已儲存</span>
-    <button class="edit-btn" onclick="event.stopPropagation();openPEdit('${r.num}')">編輯</button>
-  </div>
-  <div class="pcard-body" id="pcb-${r.num}">
-    <div class="pfi">
-      <div class="pfi-row"><span class="pfi-label">負責人</span><span class="pfi-val">${escH(d.owner||'—')}</span></div>
-      <div class="pfi-row"><span class="pfi-label">預計完成日</span><span class="pfi-val">${escH(d.launch||'—')}</span></div>
-      <div class="pfi-row"><span class="pfi-label">需求內容</span><span class="pfi-val" style="white-space:pre-wrap">${escH(d.reqContent||r.desc||'—')}</span></div>
-      <div class="pfi-row" style="margin-top:4px"><span class="pfi-label" style="color:var(--accent-t);font-weight:600">進度記錄</span><span></span></div>
-      <div class="pupd-box" id="puf-${r.num}">${
-        updLines.length
-          ? updLines.map((l,i)=>{
-              // 取出序號部分（如 "1.5/29 "）和內容
-              const m=l.match(/^(\d+\.\S+)\s(.*)$/);
-              if(m) return `<div class="upd-line${i===updLines.length-1?' upd-latest':''}"><span class="upd-seq">${escH(m[1])}</span> ${escH(m[2])}</div>`;
-              return `<div class="upd-line${i===updLines.length-1?' upd-latest':''}">${escH(l)}</div>`;
-            }).join('')
-          : '<span style="color:var(--hint);font-size:11px">尚無進度記錄</span>'
-      }</div>
-    </div>
-    <div class="pedit-area" id="pea-${r.num}">
-      <div class="pedit-row"><span class="pedit-label">狀態</span>
-        <select id="pes-${r.num}">${STATUS_OPTS.map(o=>`<option${st===o?' selected':''}>${o}</option>`).join('')}</select>
-      </div>
-      <div class="pedit-row"><span class="pedit-label">負責人</span>
-        <input type="text" id="peo-${r.num}" value="${escH(d.owner||'')}" placeholder="填入負責人姓名">
-      </div>
-      <div class="pedit-row"><span class="pedit-label">預計上市</span>
-        <input type="text" id="pel-${r.num}" value="${escH(d.launch||'')}" placeholder="例：2026/08/31">
-      </div>
-      <div class="pedit-row" style="align-items:flex-start"><span class="pedit-label" style="margin-top:5px">進度說明</span>
-        <div style="flex:1">
-          <textarea id="peu-${r.num}" placeholder="填入本次進度說明，儲存後自動加上序號與日期...（序號接續上次：${updLines.length+1}）" style="width:100%;font-size:12px;padding:5px 8px;border:1px solid var(--border-s);border-radius:var(--radius-s);font-family:inherit;background:#fff;color:var(--text);resize:vertical;min-height:50px;outline:none"></textarea>
-          <div style="font-size:10px;color:var(--hint);margin-top:2px">儲存後自動標記為：<strong>${updLines.length+1}.${TODAY_PROJ_TMPL} 你的說明</strong></div>
-        </div>
-      </div>
-      <div class="pedit-row"><span class="pedit-label">備註</span>
-        <input type="text" id="pen-${r.num}" value="${escH(d.note||'')}" placeholder="備註">
-      </div>
-      <div style="display:flex;gap:6px;margin-top:5px">
-        <button class="psave-btn" onclick="savePCard('${r.num}')">儲存</button>
-        <button class="pcancel-btn" onclick="closePEdit('${r.num}')">取消</button>
-      </div>
-    </div>
-  </div>
-</div>`;
-    }).join('');
-    return `<div class="proj-sec">
-  <div class="proj-sec-hdr" onclick="togPSec('${secId}')">
-    <span class="proj-sec-arr op" id="psa-${secId}">▶</span>
-    <span class="proj-sec-t">${cat}</span>
-    <span class="proj-sec-cnt">${items.length} 項</span>
-  </div>
-  <div class="proj-sec-body op" id="psb-${secId}">${cards}</div>
-</div>`;
-  }).join('') || (shownByCat.length===0&&yearRec.length===0
-    ? ('<div style="text-align:center;padding:24px;color:var(--hint);font-size:13px">' +
-       '此年度取號記錄尚未匯入系統<br>' +
-       '<span style="font-size:12px">計數器顯示本年度共有 '+yearCount(projYear)+' 筆記錄</span><br>' +
-       '<span style="font-size:11px;margin-top:6px;display:inline-block">如需查詢歷史記錄，請在後台執行對應年度的資料初始化</span></div>')
-    : '<div class="empty">此季度無取號記錄</div>');
-
-  document.getElementById('main-content').innerHTML=`
-    <div style="background:var(--surface);border-bottom:1px solid var(--border);padding:10px 14px 0;margin:-14px -14px 12px">
-
-      <div style="font-size:11px;font-weight:700;color:var(--hint);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px">年度</div>
-      <div class="wtabs" style="margin-bottom:10px">${yearBtns}</div>
-
-      <div style="font-size:11px;font-weight:700;color:var(--hint);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px">季度</div>
-      <div class="wtabs" style="margin-bottom:10px">${quarterBtns}</div>
-
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px">
-        <div class="stat" style="padding:6px 8px"><div class="stat-v" style="font-size:18px;color:var(--amber)">${counts.prog}</div><div class="stat-l">進行中</div></div>
-        <div class="stat" style="padding:6px 8px"><div class="stat-v" style="font-size:18px;color:var(--green)">${counts.done}</div><div class="stat-l">完成/上市</div></div>
-        <div class="stat" style="padding:6px 8px"><div class="stat-v" style="font-size:18px;color:var(--muted)">${counts.other}</div><div class="stat-l">其他</div></div>
-      </div>
-
-      <div style="display:flex;gap:6px;flex-wrap:wrap;padding-bottom:6px;align-items:center">
-        <select class="filter-select" id="proj-fc" onchange="renderProj()">
-          <option value="">全部國別</option>
-          <option value="TW">TW</option><option value="US">US</option>
-          <option value="KR">KR</option><option value="JP">JP</option><option value="HK">HK</option>
-          ${S.options.countries.map(o=>`<option value="${escH(o.code)}">${escH(o.code)}</option>`).join('')}
-        </select>
-        <select class="filter-select" id="proj-fs" onchange="renderProj()">
-          <option value="">全部狀態</option>
-          ${STATUS_OPTS.map(s=>`<option value="${s}">${s}</option>`).join('')}
-        </select>
-        <span style="font-size:12px;color:var(--muted);align-self:center">顯示 ${shownByCat.length} 筆</span>
-        <button onclick="downloadExcelYear('${projYear}')" style="margin-left:auto;padding:6px 14px;border:1px solid var(--accent);border-radius:var(--radius-s);background:var(--accent-l);color:var(--accent-t);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">📥 下載控管表</button>
-      </div>
-      <div style="padding:8px 0 6px;border-top:1px solid var(--border)">
-        <div style="font-size:10px;font-weight:700;color:var(--hint);letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px">狀態篩選</div>
-        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px">
-          ${[
-            {key:'',   label:'全部', cnt:shown.length,   bg:'var(--accent)',  tc:'#fff',     off:'var(--surface)'},
-            {key:'active', label:'進行中', cnt:cntActive, bg:'var(--amber-l)', tc:'var(--amber)',  off:'var(--surface)'},
-            {key:'done',   label:'已完成', cnt:cntDone,  bg:'var(--green-l)', tc:'var(--green)',  off:'var(--surface)'},
-            {key:'overdue',label:'逾期',   cnt:cntOverdue,bg:'var(--red-l)',  tc:'var(--red)',    off:'var(--surface)'},
-          ].map(({key,label,cnt,bg,tc,off})=>{
-            const on=key===projStatusFilter;
-            return `<button onclick="setProjStatusFilter('${key}')"
-              style="padding:5px 11px;border:1px solid ${on?'transparent':'var(--border-s)'};border-radius:20px;
-              background:${on?bg:off};color:${on?tc:'var(--muted)'};
-              font-family:inherit;font-size:12px;font-weight:${on?'700':'400'};cursor:pointer;
-              display:inline-flex;align-items:center;gap:4px;white-space:nowrap">
-              ${label}
-              <span style="font-size:10px;padding:1px 5px;border-radius:20px;
-                background:${on?'rgba(0,0,0,.1)':'var(--border)'};color:${on?tc:'var(--muted)'}">${cnt}</span>
-            </button>`;
-          }).join('')}
-        </div>
-        <div style="font-size:10px;font-weight:700;color:var(--hint);letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px">類別篩選</div>
-        <div style="display:flex;align-items:flex-start;gap:5px">
-          <div style="display:flex;gap:5px;flex-wrap:wrap;flex:1">${catBtns}</div>
-          <div style="display:flex;gap:5px;flex-shrink:0;margin-left:4px">
-            <button onclick="toggleAllSec(true)" style="padding:4px 9px;border:1px solid var(--border-s);border-radius:var(--radius-s);background:var(--surface);font-family:inherit;font-size:11px;cursor:pointer;color:var(--muted);white-space:nowrap">全展開</button>
-            <button onclick="toggleAllSec(false)" style="padding:4px 9px;border:1px solid var(--border-s);border-radius:var(--radius-s);background:var(--surface);font-family:inherit;font-size:11px;cursor:pointer;color:var(--muted);white-space:nowrap">全收折</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="proj-save-msg" style="display:none;background:var(--green-l);border:1px solid #9FC9AA;border-radius:var(--radius-s);padding:8px 12px;font-size:12px;color:var(--green);margin-bottom:8px">✓ 已自動儲存至 Firebase</div>
-    ${secHtml}`;
-}
-
-function setProjYear(y){
-  projYear=y;
-  projQuarter=0;
-  projCat='';
-  projStatusFilter='';
-  renderProj();
-}
-function setProjCat(cat){
-  projCat=cat;
-  renderProj();
-}
-function setProjStatusFilter(key){
-  projStatusFilter=key;
-  projCat=''; // 切換狀態篩選時重設類別
-  renderProj();
-}
-function toggleAllSec(expand){
-  // 分組區塊
-  document.querySelectorAll('[id^="psb-"]').forEach(el=>el.classList.toggle('op',expand));
-  document.querySelectorAll('[id^="psa-"]').forEach(el=>el.classList.toggle('op',expand));
-  // 每張卡片內容
-  document.querySelectorAll('[id^="pcb-"]').forEach(el=>el.classList.toggle('op',expand));
-  document.querySelectorAll('[id^="pca-"]').forEach(el=>el.classList.toggle('op',expand));
-  // 收折時也關閉所有編輯區
-  if(!expand) document.querySelectorAll('[id^="pea-"]').forEach(el=>el.style.display='none');
-}
-function setProjQuarter(q){
-  projQuarter=q;
-  projCat='';
-  projStatusFilter='';
-  renderProj();
-}
-
-function togPSec(id){
-  const b=document.getElementById('psb-'+id),a=document.getElementById('psa-'+id);
-  if(!b)return;const op=b.classList.toggle('op');a.classList.toggle('op',op);
-}
-function togPCard(num){
-  const b=document.getElementById('pcb-'+num),a=document.getElementById('pca-'+num);
-  if(!b)return;const op=b.classList.toggle('op');a.classList.toggle('op',op);
-}
-function openPEdit(num){
-  document.getElementById('pcb-'+num)?.classList.add('op');
-  document.getElementById('pca-'+num)?.classList.add('op');
-  document.getElementById('pea-'+num).style.display='block';
-  document.getElementById('pc-'+num)?.classList.add('editing');
-  document.getElementById('peu-'+num)?.focus();
-}
-function closePEdit(num){
-  document.getElementById('pea-'+num).style.display='none';
-  document.getElementById('pc-'+num)?.classList.remove('editing');
-}
-
-const TODAY_PROJ=(()=>{const n=new Date();return `${n.getMonth()+1}/${n.getDate()}`;})();
-const TODAY_PROJ_TMPL=TODAY_PROJ; // alias for use in template literals
-
-async function savePCard(num){
-  const ns=document.getElementById('pes-'+num)?.value||'';
-  const no=document.getElementById('peo-'+num)?.value.trim()||'';
-  const nl=document.getElementById('pel-'+num)?.value.trim()||'';
-  const nu=document.getElementById('peu-'+num)?.value.trim()||'';
-  const nn=document.getElementById('pen-'+num)?.value.trim()||'';
-
-  if(!S.projDetails[num])S.projDetails[num]={};
-  const d=S.projDetails[num];
-  d.status=ns;d.owner=no;d.launch=nl;d.note=nn;
-
-  if(nu){
-    const prev=d.progress?d.progress.split('\n').filter(Boolean):[];
-    prev.push(`${prev.length+1}.${TODAY_PROJ} ${nu}`);
-    d.progress=prev.join('\n');
-  }
-
-  setSyn('sv');
-  await fbPatch(P_PROJ+'/'+num, d);
-  setSyn('ok');
-
-  // In-place UI update
-  const card=document.getElementById('pc-'+num);
-  if(card){
-    const isDone=ns==='已完成'||ns==='已上市'||ns==='結案'||ns==='不執行';
-    card.classList.toggle('pstat-done',isDone);
-    const badge=card.querySelector('.pcard-status');
-    if(badge){
-      badge.textContent=ns||'進行中';
-      badge.style.background=STATUS_COLOR[ns]||'var(--bg)';
-      badge.style.color=STATUS_TC[ns]||'var(--muted)';
-      badge.className='pcard-status '+projStatusClass(ns);
-    }
-    const sv=document.getElementById('psv-'+num);
-    if(sv){sv.style.display='inline';setTimeout(()=>sv.style.display='none',2500);}
-    const pb=document.getElementById('puf-'+num);
-    if(pb){
-      const lines=(d.progress||'').split('\n').filter(Boolean);
-      pb.innerHTML=lines.length
-        ? lines.map((l,i)=>{
-            const m=l.match(/^(\d+\.\S+)\s(.*)$/);
-            if(m) return `<div class="upd-line${i===lines.length-1?' upd-latest':''}"><span class="upd-seq">${escH(m[1])}</span> ${escH(m[2])}</div>`;
-            return `<div class="upd-line${i===lines.length-1?' upd-latest':''}">${escH(l)}</div>`;
-          }).join('')
-        : '<span style="color:var(--hint);font-size:11px">尚無進度記錄</span>';
-      // update the placeholder hint for next entry
-      const ta=document.getElementById('peu-'+num);
-      if(ta) ta.placeholder=`填入本次進度說明，儲存後自動加上序號與日期...（序號接續上次：${lines.length+1}）`;
-    }
-  }
-
-  const msg=document.getElementById('proj-save-msg');
-  if(msg){msg.style.display='block';clearTimeout(msg._t);msg._t=setTimeout(()=>msg.style.display='none',2500);}
-  if(document.getElementById('peu-'+num)) document.getElementById('peu-'+num).value='';
-  closePEdit(num);
-}
-
-// saveProjField replaced by savePCard
-
-// ── Admin: Export Excel ───────────────────────────────────────────────────────
-function renderAdmExport(){
-  const years=getYears();
-  const yrBtns=years.map(y=>`
-    <button onclick="downloadExcelYear('${y}')"
-      style="padding:10px 16px;border:1px solid var(--border-s);border-radius:var(--radius-s);background:var(--bg);font-family:inherit;font-size:13px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:90px">
-      <span style="font-weight:700;color:var(--accent)">${parseInt(y)+1911}年</span>
-      <span style="font-size:10px;color:var(--muted)">民國${y}年</span>
-      <span style="font-size:11px;color:var(--muted)">${S.records.filter(r=>r.year===y).length} 筆</span>
-    </button>`).join('');
-  document.getElementById('main-content').innerHTML=`
-    <div class="card">
-      <div class="card-title">📥 下載研發專案控管表</div>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.7">
-        從 Firebase 讀取取號記錄及最新專案狀態，產出 Excel 控管表。<br>
-        包含：專案總表（編號、項目、名稱、進度、負責人、狀態…）＋ 統計總覽
-      </p>
-      <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px">選擇年度下載</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">${yrBtns}</div>
-      <div style="border-top:1px solid var(--border);padding-top:12px;display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn-p" id="dl-btn" onclick="downloadExcel()" style="flex:1;min-width:140px">
-          📥 下載本年度（${parseInt(getRocYear())+1911}年）
-        </button>
-        <button class="btn-s" onclick="refreshAndExport()">🔄 重新讀取後下載</button>
-      </div>
-      <div id="export-msg" style="margin-top:10px;font-size:12px;display:none"></div>
-    </div>`;
-}
-
-async function refreshAndExport(){
-  const msg=document.getElementById('export-msg');
-  if(msg){msg.style.display='block';msg.style.color='var(--amber)';msg.textContent='🔄 重新讀取 Firebase 資料中...';}
-  await loadFirebase();
-  if(msg){msg.textContent='✓ 資料已更新，開始產生 Excel...';msg.style.color='var(--green)';}
-  setTimeout(()=>downloadExcel(),200);
-}
-
-async function downloadExcelYear(yr){
-  yr=yr||getRocYear();
-  const rawP=await fbGet(P_PROJ);
-  if(rawP&&typeof rawP==='object') S.projDetails={...rawP};
-  const adYear=parseInt(yr)+1911;
-  const records=S.records.filter(r=>r.year===yr)
-    .sort((a,b)=>a.seq-b.seq||a.country.localeCompare(b.country));
-  if(!records.length){alert(adYear+'年度尚無取號記錄');return;}
-  const wb=XLSX.utils.book_new();
-
-  // ── Sheet1: 年度專案總表 ──
-  const sheetTitle=adYear+'年度產品專案控管表';
-  const headers=['項次','產品開發\n需求單編號','項目','名稱','取號人','需求內容','目前進度說明','期望完成日','負責人','結案/暫緩','狀態','備註','國別'];
-  const dataRows=records.map((r,i)=>{
-    const d=S.projDetails[r.num]||{};
-    const cleanProg=(d.progress||'').split('\n').filter(Boolean)
-      .map(l=>l.replace(/^\d+\.\S+\s/,'').trim()).join('\n');
-    return [i+1,r.num,r.category,r.name,r.requester||'',(d.reqContent||r.desc||''),
-      cleanProg,d.launch||'',d.owner||'',d.status||'',d.status||'',d.note||'',r.country];
-  });
-  const ws1=XLSX.utils.aoa_to_sheet([[sheetTitle,...Array(12).fill('')],headers,...dataRows]);
-  ws1['!cols']=[{wch:6},{wch:12},{wch:12},{wch:30},{wch:8},{wch:36},{wch:44},{wch:10},{wch:8},{wch:10},{wch:10},{wch:12},{wch:6}];
-  ws1['!rows']=[{hpt:24},{hpt:52},...records.map(()=>({hpt:60}))];
-  ws1['!merges']=[{s:{r:0,c:0},e:{r:0,c:12}}];
-
-  // 套用儲存格樣式
-  const range=XLSX.utils.decode_range(ws1['!ref']);
-  for(let R=range.s.r;R<=range.e.r;R++){
-    for(let C=range.s.c;C<=range.e.c;C++){
-      const addr=XLSX.utils.encode_cell({r:R,c:C});
-      if(!ws1[addr])ws1[addr]={t:'s',v:''};
-      const isTitle=R===0,isHeader=R===1,isEven=R>1&&R%2===0;
-      ws1[addr].s={
-        font:{name:'微軟正黑體',sz:isTitle?14:11,bold:isTitle||isHeader,color:{rgb:isTitle?'FFFFFF':'000000'}},
-        fill:{fgColor:{rgb:isTitle?'1F3864':isHeader?'B8CCE4':isEven?'EEF2F8':'FFFFFF'},patternType:'solid'},
-        alignment:{wrapText:true,vertical:'top',horizontal:isTitle?'center':C===0?'center':'left'},
-        border:{top:{style:'thin',color:{rgb:'C8C5BE'}},bottom:{style:'thin',color:{rgb:'C8C5BE'}},left:{style:'thin',color:{rgb:'C8C5BE'}},right:{style:'thin',color:{rgb:'C8C5BE'}}}
-      };
-    }
-  }
-  XLSX.utils.book_append_sheet(wb,ws1,adYear+'年專案總表');
-
-  // ── Sheet2: 統計總覽 ──
-  const countries=['TW','US','KR','JP','HK',...S.options.countries.map(c=>c.code)];
-  const statusList=['進行中','尚未開始','已完成','已上市','不執行','結案','持續','暫緩','待確認'];
-  const statMap={};
-  records.forEach(r=>{
-    const d=S.projDetails[r.num]||{};
-    const c=r.country,st=d.status||'進行中';
-    if(!statMap[c])statMap[c]={};
-    statMap[c][st]=(statMap[c][st]||0)+1;
-  });
-  const statsHeader=['國別',...statusList,'總計'];
-  const statsRows=countries.filter(c=>statMap[c]).map(c=>{
-    const m=statMap[c]||{};
-    const all=Object.values(m).reduce((s,v)=>s+v,0);
-    return [c,...statusList.map(st=>m[st]||0),all];
-  });
-  const totalRow=['合計',...statusList.map(st=>records.filter(r=>(S.projDetails[r.num]?.status||'進行中')===st).length),records.length];
-  const ws2=XLSX.utils.aoa_to_sheet([[adYear+'年度 各國別專案狀態統計',...Array(statsHeader.length-1).fill('')],statsHeader,...statsRows,totalRow]);
-  ws2['!merges']=[{s:{r:0,c:0},e:{r:0,c:statsHeader.length-1}}];
-  ws2['!cols']=[{wch:8},...Array(statusList.length+3).fill({wch:9})];
-  XLSX.utils.book_append_sheet(wb,ws2,'統計總覽');
-
-  const dateStr=new Date().toLocaleDateString('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit'}).replace(/\//g,'');
-  XLSX.writeFile(wb,'研發專案控管表_'+adYear+'_'+dateStr+'.xlsx');
-}
-
-async function downloadExcel(){
-  const btn=document.getElementById('dl-btn');
-  const msg=document.getElementById('export-msg');
-  if(btn){btn.disabled=true;btn.textContent='產生中...';}
-  if(msg){msg.style.display='block';msg.style.color='var(--amber)';msg.textContent='⏳ 正在產生 Excel 檔案...';}
-  try{
-    await downloadExcelYear(getRocYear());
-    if(msg){msg.style.color='var(--green)';msg.textContent='✅ 下載完成！';}
-  }catch(e){
-    if(msg){msg.style.color='var(--red)';msg.textContent='❌ 產生失敗：'+e.message;}
-    console.error(e);
-  }finally{
-    if(btn){btn.disabled=false;btn.textContent='📥 下載最新控管表';}
-  }
-}
-
-
-// ── Boot：直接顯示取號畫面，Firebase 背景載入 ─────────────────────────────────
+// ── Boot ──────────────────────────────────────────
 render();
-loadFirebase().then(()=>{
-  // Firebase 載完後一律重新 render 目前畫面（讓資料即時顯示）
-  if(!S.adminOK) render();
-});
+loadFirebase().then(()=>{if(!S.adminOK)render();});
 </script>
 </body>
 </html>
