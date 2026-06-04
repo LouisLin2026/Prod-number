@@ -368,6 +368,10 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
     <button class="nav-btn" id="nb-line" onclick="swTab('line')" style="display:none">
       <span class="ico">💬</span>Line 設定
     </button>
+    <button class="nav-btn" id="nb-dupcheck" onclick="swTab('dupcheck')" style="display:none">
+      <span class="ico">🔍</span>重複檢查
+      <span class="nbadge" id="badge-dup" style="display:none">0</span>
+    </button>
   </div>
 
   <div class="content" id="main"></div>
@@ -598,7 +602,7 @@ async function _doLogin(name,isMgr,deptId){
   S.weekLabel=[getWeekLabel(0),getWeekLabel(1)];
   document.getElementById('hdr-sub').textContent=(isMgr?'管理者模式':'單位模式')+' · '+S.todayStr;
   if(isMgr){
-    ['import','report','depts','line'].forEach(t=>document.getElementById('nb-'+t).style.display='flex');
+    ['import','report','depts','line','dupcheck'].forEach(t=>document.getElementById('nb-'+t).style.display='flex');
   }
   const savedToken=localStorage.getItem('yilan_line_token')||'';
   const savedNotify=JSON.parse(localStorage.getItem('yilan_line_notify')||'null');
@@ -634,7 +638,7 @@ function visibleTasks(){
 // ══ Tab ══
 function swTab(t){
   S.tab=t;
-  ['board','import','report','depts','line'].forEach(n=>document.getElementById('nb-'+n)?.classList.toggle('active',n===t));
+  ['board','import','report','depts','line','dupcheck'].forEach(n=>document.getElementById('nb-'+n)?.classList.toggle('active',n===t));
   renderTab();
 }
 function renderTab(){
@@ -643,6 +647,7 @@ function renderTab(){
   else if(S.tab==='report')renderReport();
   else if(S.tab==='depts')renderDepts();
   else if(S.tab==='line')renderLineSettings();
+  else if(S.tab==='dupcheck')renderDupCheck();
 }
 
 // ══ 雙週看板 ══
@@ -888,6 +893,18 @@ function closeEditModal(){
 
 async function saveTaskEdit(id){
   const t=S.tasks[id];if(!t)return;
+  // 若標題有改，做重複比對
+  var newTitle=document.getElementById('et-title-'+id)?.value.trim()||t.title;
+  if(newTitle!==t.title){
+    var fakeT={title:newTitle,desc:document.getElementById('et-desc-'+id)?.value||''};
+    var dupH=findSimilar(fakeT);
+    if(dupH&&dupH.score>=0.5&&dupH.task.id!==id){
+      var ex=dupH.task;
+      var dn=S.depts.find(function(d){return d.id===ex.deptId;})||{name:''};
+      var ok=confirm('⚠️ 修改後標題疑似與現有任務重複（'+Math.round(dupH.score*100)+'%）\n\n現有：'+ex.title+'\n單位：'+dn.name+'\n\n確定繼續儲存？');
+      if(!ok)return;
+    }
+  }
   const title=document.getElementById('em-title')?.value.trim();
   if(!title){alert('請填入任務標題');return;}
   const dueRaw=document.getElementById('em-due')?.value||'';
@@ -1045,6 +1062,15 @@ function resetAddForm(){
 async function addTask(){
   const title=document.getElementById('af-title')?.value.trim();
   if(!title){alert('請填入任務標題');return;}
+  // 即時重複提示
+  var dupHint=findSimilar({title:title,desc:document.getElementById('af-desc')?.value||''});
+  if(dupHint&&dupHint.score>=0.5){
+    var existT=dupHint.task;
+    var deptN=S.depts.find(function(d){return d.id===existT.deptId;})||{name:''};
+    var pct=Math.round(dupHint.score*100);
+    var ok=confirm('⚠️ 疑似與現有任務重複（相似度'+pct+'%）\n\n現有：'+existT.title+'\n單位：'+deptN.name+'　期限：'+(existT.dueDate||'未設定')+'\n\n確定要開新案？（取消則放棄新增）');
+    if(!ok)return;
+  }
   const deptId=document.getElementById('af-dept')?.value||'';
   const dueRaw=document.getElementById('af-due')?.value||'';
   const due=dueRaw?dueRaw.replace(/-/g,'/'):'';
@@ -1179,22 +1205,84 @@ function parseMeetingTasks(){
   if(btn)btn.disabled=false;
 }
 
+// ── 標題相似度比對（bigram jaccard）──
+function titleSim(a,b){
+  if(!a||!b)return 0;
+  a=a.replace(/\s/g,'');b=b.replace(/\s/g,'');
+  if(a===b)return 1;
+  function bigrams(s){var set={};for(var i=0;i<s.length-1;i++){var k=s[i]+s[i+1];set[k]=1;}return set;}
+  var ba=bigrams(a),bb=bigrams(b);
+  var inter=0,union=Object.assign({},ba,bb);
+  for(var k in ba){if(bb[k])inter++;}
+  return inter/Object.keys(union).length;
+}
+// ── 內容相似度（關鍵詞交集）──
+function contentSim(a,b){
+  if(!a||!b)return 0;
+  function kws(s){return s.replace(/[，。、：:（）\(\)\s]/g,' ').split(' ').filter(function(w){return w.length>=2;});}
+  var ka=kws(a),kb=kws(b);
+  if(!ka.length||!kb.length)return 0;
+  var inter=ka.filter(function(w){return kb.indexOf(w)>=0;}).length;
+  return inter/Math.max(ka.length,kb.length);
+}
+// ── 找現有任務中最相似的 ──
+function findSimilar(parsed){
+  var best=null,bestScore=0;
+  Object.values(S.tasks).forEach(function(t){
+    var ts=titleSim(parsed.title,t.title);
+    var ds=contentSim(parsed.desc||parsed.title,t.desc||t.title);
+    var score=ts*0.7+ds*0.3;
+    if(score>bestScore){bestScore=score;best=t;}
+  });
+  return bestScore>=0.45?{task:best,score:bestScore}:null;
+}
+
 function renderParsedTasks(){
-  const box=document.getElementById('parsed-tasks');
-  const list=document.getElementById('pt-list');
+  var box=document.getElementById('parsed-tasks');
+  var list=document.getElementById('pt-list');
   if(!box||!list)return;
-  // 同時支援 class op 和 style display（兩種頁面都相容）
   box.classList.add('op');
   box.style.display='block';
+  // 預先比對每項
   list.innerHTML=S.parsedTasks.map(function(t,i){
-    return '<div class="pt-item">'+
-      '<input type="checkbox" class="pt-check" id="ptc-'+i+'" checked>'+
-      '<div class="pt-info">'+
-        '<div class="pt-title">'+escH(t.title)+'</div>'+
-        '<div class="pt-meta">'+
-          (t.dept?'單位：'+escH(t.dept)+'　':'')+
-          (t.dueDate?'期限：'+escH(t.dueDate)+'　':'')+
-          (t.desc?escH(t.desc):'')+
+    var sim=findSimilar(t);
+    var simHtml='';
+    var actionHtml='';
+    if(sim){
+      var pct=Math.round(sim.score*100);
+      var existDept=S.depts.find(function(d){return d.id===sim.task.deptId;})||{name:''};
+      simHtml='<div style="margin-top:5px;padding:6px 8px;background:#FEF3E0;border:1px solid #F5C97A;border-radius:6px;font-size:11px;color:#92400E">'+
+        '<span style="font-weight:700;color:var(--amber)">⚠️ 疑似重複（相似度'+pct+'%）</span><br>'+
+        '現有：<strong>'+escH(sim.task.title)+'</strong>'+
+        (existDept.name?' ／'+escH(existDept.name):'')+
+        (sim.task.dueDate?' ／期限:'+escH(sim.task.dueDate):'')+
+        (sim.task.status?' ／'+escH(sim.task.status):'')+
+      '</div>';
+      actionHtml='<div style="display:flex;gap:5px;margin-top:6px;flex-wrap:wrap">'+
+        '<label style="display:flex;align-items:center;gap:3px;font-size:11px;cursor:pointer;padding:3px 8px;border:1px solid var(--green);border-radius:20px;color:var(--green)">'+
+          '<input type="radio" name="act'+i+'" value="merge" checked style="accent-color:var(--green)"> 合併更新現有項目</label>'+
+        '<label style="display:flex;align-items:center;gap:3px;font-size:11px;cursor:pointer;padding:3px 8px;border:1px solid var(--navy);border-radius:20px;color:var(--navy)">'+
+          '<input type="radio" name="act'+i+'" value="new" style="accent-color:var(--navy)"> 開新案</label>'+
+        '<label style="display:flex;align-items:center;gap:3px;font-size:11px;cursor:pointer;padding:3px 8px;border:1px solid var(--hint);border-radius:20px;color:var(--hint)">'+
+          '<input type="radio" name="act'+i+'" value="skip" style="accent-color:var(--hint)"> 跳過</label>'+
+      '</div>';
+      // 存在 parsedTasks 上供 import 時讀取
+      t._simId=sim.task.id;
+    } else {
+      t._simId=null;
+      actionHtml='<div style="font-size:11px;color:var(--green);margin-top:4px">✨ 新任務</div>';
+    }
+    return '<div class="pt-item" id="pti-'+i+'" style="border-radius:var(--radius-s);border:1px solid var(--border);padding:9px;margin-bottom:7px;background:var(--surface)">'+
+      '<div style="display:flex;align-items:flex-start;gap:8px">'+
+        '<input type="checkbox" class="pt-check" id="ptc-'+i+'" checked style="margin-top:3px;accent-color:var(--navy);flex-shrink:0">'+
+        '<div style="flex:1">'+
+          '<div class="pt-title" style="font-weight:600;font-size:13px;margin-bottom:2px">'+escH(t.title)+'</div>'+
+          '<div class="pt-meta" style="font-size:11px;color:var(--muted)">'+
+            (t.dept?'單位：'+escH(t.dept)+'　':'')+
+            (t.dueDate?'期限：<strong style="color:var(--navy)">'+escH(t.dueDate)+'</strong>　':'')+
+          '</div>'+
+          simHtml+
+          actionHtml+
         '</div>'+
       '</div>'+
     '</div>';
@@ -1202,32 +1290,66 @@ function renderParsedTasks(){
 }
 
 async function importParsedTasks(){
-  var selected=S.parsedTasks.filter(function(_,i){
-    var el=document.getElementById('ptc-'+i);
-    return el?el.checked:true; // el不存在時預設全選（渲染在其他容器）
-  });
-  if(!selected.length&&S.parsedTasks.length>0)selected=S.parsedTasks; // fallback全選
+  var selected=[];
+  for(var i=0;i<S.parsedTasks.length;i++){
+    var chk=document.getElementById('ptc-'+i);
+    if(!chk||chk.checked)selected.push(i);
+  }
+  if(!selected.length&&S.parsedTasks.length>0){
+    for(var j=0;j<S.parsedTasks.length;j++)selected.push(j);
+  }
   if(!selected.length){alert('請至少勾選一項');return;}
   setSyn('sv');
-  for(const t of selected){
-    const id='t'+Date.now()+Math.random().toString(36).slice(2,6);
-    const matchDept=S.depts.find(d=>d.name.includes(t.dept)||t.dept.includes(d.name));
-    const task={id,title:t.title,deptId:matchDept?.id||'',dueDate:t.dueDate||'',status:'尚未開始',desc:t.desc||'',progress:'',createdAt:S.todayStr,lastUpdated:'',fromMeeting:true};
-    S.tasks[id]=task;
-    await fbSet(P_TASKS+'/'+id,task);
-    await new Promise(r=>setTimeout(r,80));
+  var nNew=0,nMerge=0,nSkip=0;
+  for(var si=0;si<selected.length;si++){
+    var i=selected[si];
+    var t=S.parsedTasks[i];
+    var actEl=document.querySelector('input[name="act'+i+'"]:checked');
+    var act=actEl?actEl.value:(t._simId?'merge':'new');
+    if(act==='skip'){nSkip++;continue;}
+    var matchDept=S.depts.find(function(d){
+      return t.dept&&(d.name.includes(t.dept)||t.dept.includes(d.name));
+    });
+    if(act==='merge'&&t._simId){
+      var exist=S.tasks[t._simId];
+      if(!exist)continue;
+      if(t.dueDate&&t.dueDate!==exist.dueDate){
+        if(exist.dueDate)exist.completedDate=exist.dueDate;
+        exist.dueDate=t.dueDate;
+      }
+      if(matchDept&&!exist.deptId)exist.deptId=matchDept.id;
+      var prevLines=(exist.progress||'').split('\n').filter(Boolean);
+      var note='[會議更新] '+t.title.slice(0,40);
+      if(!(exist.progress||'').includes(note.slice(0,20))){
+        exist.progress=prevLines.concat([String(prevLines.length+1)+'.'+todayShort()+' '+note]).join('\n');
+      }
+      exist.lastUpdated=S.todayStr;
+      exist.fromMeeting=true;
+      await new Promise(function(r){setTimeout(r,60);});
+      await fbPatch(P_TASKS+'/'+exist.id,exist);
+      nMerge++;
+    } else {
+      await new Promise(function(r){setTimeout(r,80);});
+      var id='t'+Date.now()+Math.random().toString(36).slice(2,6);
+      var task={id:id,title:t.title,deptId:matchDept?matchDept.id:'',
+        dueDate:t.dueDate||'',completedDate:'',status:'尚未開始',
+        desc:t.desc||'',progress:'',category:'',owner:'',coowner:'',comments:'',
+        createdAt:S.todayStr,lastUpdated:'',fromMeeting:true};
+      S.tasks[id]=task;
+      await fbSet(P_TASKS+'/'+id,task);
+      nNew++;
+    }
   }
   setSyn('ok');
   S.parsedTasks=[];
   S.meetOpen=false;
-  toast(`✓ 已匯入 ${selected.length} 項任務`);
-  if(S.lineNotify.importTask&&selected.length>0){
-    const taskList=selected.map(t=>`• ${t.title}${t.dept?' → '+t.dept:''}`).join('\n');
-    lineNotify(`📋 會議記錄匯入 ${selected.length} 項任務\n\n${taskList}\n\n請各單位登入系統確認。`);
+  var msg='✓ 新增 '+nNew+' 項、合併更新 '+nMerge+' 項'+(nSkip?'、跳過 '+nSkip+' 項':'');
+  toast(msg,'var(--green)');
+  if(S.lineNotify&&S.lineNotify.importTask&&(nNew+nMerge)>0){
+    lineNotify('📋 會議記錄匯入完成\n新增 '+nNew+' 項、合併更新 '+nMerge+' 項');
   }
   renderBoard();
 }
-
 // ══ 週報頁 ══
 function renderReport(){
   const tasks=Object.values(S.tasks);
@@ -1770,6 +1892,114 @@ async function applyXlDiff(){
   toast('✓ 已新增 '+nN+' 項、更新 '+nU+' 項','var(--green)');
   clearXlFile();
   swTab('board');
+}
+
+// ══ 重複任務全庫掃描 ══
+function renderDupCheck(){
+  var tasks=Object.values(S.tasks);
+  // 兩兩比對，找出相似度>=0.45的配對（每對只算一次）
+  var pairs=[];
+  for(var i=0;i<tasks.length;i++){
+    for(var j=i+1;j<tasks.length;j++){
+      var a=tasks[i],b=tasks[j];
+      if(DONE_ST.has(a.status||'')||DONE_ST.has(b.status||''))continue;
+      var ts=titleSim(a.title,b.title);
+      var ds=contentSim((a.desc||'')+' '+(a.title||''),(b.desc||'')+' '+(b.title||''));
+      var score=ts*0.7+ds*0.3;
+      if(score>=0.45)pairs.push({a:a,b:b,score:score});
+    }
+  }
+  pairs.sort(function(x,y){return y.score-x.score;});
+  // 更新 badge
+  var badge=document.getElementById('badge-dup');
+  if(badge){if(pairs.length>0){badge.style.display='inline';badge.textContent=pairs.length;}else badge.style.display='none';}
+  function deptName(t){return(S.depts.find(function(d){return d.id===t.deptId;})||{name:'未分配'}).name;}
+  var html='';
+  if(pairs.length===0){
+    html='<div class="empty">🎉 沒有發現重複任務，資料庫很乾淨！</div>';
+  } else {
+    html=pairs.map(function(p,pi){
+      var pct=Math.round(p.score*100);
+      var color=p.score>=0.75?'var(--red)':p.score>=0.55?'var(--amber)':'var(--muted)';
+      return '<div style="border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:10px;background:var(--surface)">'+
+        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">'+
+          '<span style="font-size:12px;font-weight:700;padding:2px 9px;border-radius:20px;background:'+color+';color:#fff">相似度 '+pct+'%</span>'+
+          '<span style="font-size:11px;color:var(--muted)">進行中任務對比</span>'+
+        '</div>'+
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">'+
+          '<div style="padding:8px;background:var(--bg);border-radius:var(--radius-s);font-size:12px">'+
+            '<div style="font-weight:700;margin-bottom:3px">'+escH(p.a.title)+'</div>'+
+            '<div style="color:var(--muted)">'+escH(deptName(p.a))+'　'+(p.a.dueDate?'期限:'+p.a.dueDate:'')+'</div>'+
+            '<div style="color:var(--muted);margin-top:2px">'+escH(p.a.status||'進行中')+'</div>'+
+          '</div>'+
+          '<div style="padding:8px;background:var(--bg);border-radius:var(--radius-s);font-size:12px">'+
+            '<div style="font-weight:700;margin-bottom:3px">'+escH(p.b.title)+'</div>'+
+            '<div style="color:var(--muted)">'+escH(deptName(p.b))+'　'+(p.b.dueDate?'期限:'+p.b.dueDate:'')+'</div>'+
+            '<div style="color:var(--muted);margin-top:2px">'+escH(p.b.status||'進行中')+'</div>'+
+          '</div>'+
+        '</div>'+
+        '<div style="display:flex;gap:6px;flex-wrap:wrap">'+
+          '<button onclick="mergeDup(\''+p.a.id+'\',\''+p.b.id+'\','+pi+')" style="padding:6px 14px;border:none;border-radius:20px;background:var(--green);color:#fff;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer">🔗 合併（保留左側）</button>'+
+          '<button onclick="mergeDup(\''+p.b.id+'\',\''+p.a.id+'\','+pi+')" style="padding:6px 14px;border:none;border-radius:20px;background:var(--navy);color:#fff;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer">🔗 合併（保留右側）</button>'+
+          '<button onclick="skipDup('+pi+')" style="padding:6px 14px;border:1px solid var(--border-s);border-radius:20px;background:#fff;color:var(--muted);font-family:inherit;font-size:12px;cursor:pointer">忽略此對</button>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+  }
+  document.getElementById('main').innerHTML=
+    '<div style="margin-bottom:12px;display:flex;align-items:center;justify-content:space-between">'+
+      '<div>'+
+        '<div style="font-size:14px;font-weight:700;color:var(--navy)">🔍 重複任務檢查</div>'+
+        '<div style="font-size:11px;color:var(--muted);margin-top:2px">僅掃描進行中任務。相似度≥45%標記為疑似重複。</div>'+
+      '</div>'+
+      '<button onclick="renderDupCheck()" style="padding:6px 12px;border:1px solid var(--border-s);border-radius:var(--radius-s);background:#fff;font-family:inherit;font-size:12px;cursor:pointer">🔄 重新掃描</button>'+
+    '</div>'+
+    '<div id="dup-list">'+html+'</div>';
+  // 存 pairs 供合併用
+  S._dupPairs=pairs;
+}
+
+// ── 合併重複任務（保留 keepId，刪除 delId）──
+async function mergeDup(keepId,delId,pairIdx){
+  var keep=S.tasks[keepId],del=S.tasks[delId];
+  if(!keep||!del)return;
+  var ok=confirm('確定合併？\n保留：'+keep.title+'\n刪除：'+del.title+'\n\n進度記錄與截止日期將合併到保留項目。');
+  if(!ok)return;
+  setSyn('sv');
+  // 合併截止日期（取較晚的）
+  if(del.dueDate&&(!keep.dueDate||del.dueDate>keep.dueDate))keep.dueDate=del.dueDate;
+  // 合併完成日期
+  if(del.completedDate&&!keep.completedDate)keep.completedDate=del.completedDate;
+  // 合併進度記錄
+  if(del.progress){
+    var prev=(keep.progress||'').split('\n').filter(Boolean);
+    var delLines=del.progress.split('\n').filter(Boolean);
+    delLines.forEach(function(ln){
+      prev.push(String(prev.length+1)+'.'+todayShort()+' [合併自:'+del.title.slice(0,15)+'] '+ln.replace(/^\d+\.\S+\s/,''));
+    });
+    keep.progress=prev.join('\n');
+  }
+  // 合併備註
+  if(del.comments&&del.comments!==keep.comments){
+    keep.comments=(keep.comments?keep.comments+'；':'')+del.comments;
+  }
+  keep.lastUpdated=S.todayStr;
+  // 儲存保留任務
+  await fbPatch(P_TASKS+'/'+keepId,keep);
+  // 刪除被合併任務
+  delete S.tasks[delId];
+  await fbSet(P_TASKS+'/'+delId,null);
+  setSyn('ok');
+  toast('✓ 合併完成，已刪除重複任務','var(--green)');
+  renderDupCheck();
+}
+
+// ── 忽略某對（從當次掃描移除，不實際刪除）──
+function skipDup(pairIdx){
+  if(!S._dupPairs)return;
+  S._dupPairs.splice(pairIdx,1);
+  // 重繪 dup-list
+  renderDupCheck();
 }
 
 // ══ Line Notify ══
