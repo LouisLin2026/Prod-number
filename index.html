@@ -1183,23 +1183,30 @@ function renderParsedTasks(){
   const box=document.getElementById('parsed-tasks');
   const list=document.getElementById('pt-list');
   if(!box||!list)return;
+  // 同時支援 class op 和 style display（兩種頁面都相容）
   box.classList.add('op');
-  list.innerHTML=S.parsedTasks.map((t,i)=>`
-    <div class="pt-item">
-      <input type="checkbox" class="pt-check" id="ptc-${i}" checked>
-      <div class="pt-info">
-        <div class="pt-title">${escH(t.title)}</div>
-        <div class="pt-meta">
-          ${t.dept?`單位：${escH(t.dept)}　`:''}
-          ${t.dueDate?`期限：${escH(t.dueDate)}　`:''}
-          ${t.desc?escH(t.desc):''}
-        </div>
-      </div>
-    </div>`).join('');
+  box.style.display='block';
+  list.innerHTML=S.parsedTasks.map(function(t,i){
+    return '<div class="pt-item">'+
+      '<input type="checkbox" class="pt-check" id="ptc-'+i+'" checked>'+
+      '<div class="pt-info">'+
+        '<div class="pt-title">'+escH(t.title)+'</div>'+
+        '<div class="pt-meta">'+
+          (t.dept?'單位：'+escH(t.dept)+'　':'')+
+          (t.dueDate?'期限：'+escH(t.dueDate)+'　':'')+
+          (t.desc?escH(t.desc):'')+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
 }
 
 async function importParsedTasks(){
-  const selected=S.parsedTasks.filter((_,i)=>document.getElementById('ptc-'+i)?.checked);
+  var selected=S.parsedTasks.filter(function(_,i){
+    var el=document.getElementById('ptc-'+i);
+    return el?el.checked:true; // el不存在時預設全選（渲染在其他容器）
+  });
+  if(!selected.length&&S.parsedTasks.length>0)selected=S.parsedTasks; // fallback全選
   if(!selected.length){alert('請至少勾選一項');return;}
   setSyn('sv');
   for(const t of selected){
