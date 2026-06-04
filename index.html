@@ -1096,23 +1096,82 @@ async function saveTask(id){
 }
 
 // ══ 會議記錄解析 ══
-async function parseMeetingTasks(){
+function parseMeetingTasks(){
   const btn=document.getElementById('parse-btn');
   const st=document.getElementById('meet-status');
   const ta=document.getElementById('meet-ta')?.value.trim();
   if(!ta){alert('請貼入會議記錄內容');return;}
   if(btn)btn.disabled=true;
   if(st){st.style.display='block';st.style.color='var(--purple)';st.textContent='🐠 小福正在解析行動項目...';}
-  const system=`你是會議記錄解析助理。從會議記錄或行動項目中提取任務，回傳 JSON 陣列。
-每個任務格式：{"title":"任務標題","dept":"負責單位（若有）","dueDate":"YYYY/MM/DD（若有，否則空字串）","desc":"補充說明（若有）"}
-只回傳 JSON 陣列，不要其他文字。`;
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,system,messages:[{role:'user',content:`從以下會議記錄提取行動項目：\n\n${ta}`}]})});
-    const data=await res.json();
-    const raw=(data.content||[]).map(c=>c.text||'').join('');
-    const clean=raw.replace(/```json|```/g,'').trim();
-    S.parsedTasks=JSON.parse(clean);
-    if(st){st.style.color='var(--green)';st.textContent=`✓ 解析完成，共 ${S.parsedTasks.length} 項行動項目`;}
+    // ── 本地規則解析（不需 API，無 CORS 問題）──
+    const lines=ta.split('\n');
+    const results=[];
+    // 日期正則
+    const dateRe=/(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})/;
+    const dueLabelRe=/期限[：:是]?\s*|Due\s*Date[：:\s]|完成日期[：:]/i;
+    // 單位關鍵字
+    const deptKws=['設備課','生產課','品保課','製造部','廠務課','廠務部','管理部','採購部','資訊部','研發部','業務部','人資','倉管','品管','工務','副總','Louis','阿穆','阿昌','廖課','林祿偉','瑞祥','Terrence','Jackey','Danny'];
+    // 行動項目觸發詞
+    const actionRe=/^[\-\*\•·▸►]|^\d+[\.)、]/;
+    // 任務動詞
+    const taskVerbRe=/確認|安排|提供|製作|設計|盤點|建立|推動|整理|調整|測試|聯繫|規劃|評估|取得|通知|完成|協調|撰寫|制定/;
+    for(let i=0;i<lines.length;i++){
+      let line=lines[i].trim();
+      if(!line||line.length<6)continue;
+      // 判斷是否像行動項目
+      const isAction=actionRe.test(line)||
+        (line.includes('：')&&(dueLabelRe.test(line)||taskVerbRe.test(line)))||
+        (line.includes(',')&&dateRe.test(line)&&taskVerbRe.test(line));
+      if(!isAction)continue;
+      // 去掉前綴符號
+      line=line.replace(/^[\-\*\•·▸►]\s*/,'').replace(/^\d+[\.)、]\s*/,'');
+      // 提取日期
+      let dueDate='';
+      const dm=line.match(dateRe);
+      if(dm){
+        dueDate=dm[1]+'/'+dm[2].padStart(2,'0')+'/'+dm[3].padStart(2,'0');
+      }
+      // 提取單位
+      let dept='';
+      // 格式1: "單位：任務" 或 "單位：任務，期限"
+      const colonIdx=line.indexOf('：');
+      if(colonIdx>0&&colonIdx<12){
+        const pre=line.slice(0,colonIdx);
+        if(deptKws.some(k=>pre.includes(k))||pre.length<=8){
+          dept=pre.replace(/負責人[：:]?/,'').trim();
+        }
+      }
+      // 格式2: 負責人：XXX 在行末
+      const ownerM=line.match(/負責人[：:]([^，,。]+)/);
+      if(ownerM&&!dept)dept=ownerM[1].trim();
+      // 格式3: 掃描行內關鍵字
+      if(!dept){
+        for(const k of deptKws){if(line.includes(k)){dept=k;break;}}
+      }
+      // 清理標題：去掉期限、負責人部分
+      let title=line
+        .replace(/，?期限[：:]?\s*\d{4}[\/-]\d{1,2}[\/-]\d{1,2}/g,'')
+        .replace(/，?Due\s*Date[：:]?\s*\d{4}[\/-]\d{1,2}[\/-]\d{1,2}/gi,'')
+        .replace(/，?負責人[：:]([^，,。]+)/g,'')
+        .replace(/，?Owner[：:]([^，,。]+)/gi,'')
+        .trim();
+      // 去掉開頭的「單位：」
+      if(dept&&title.startsWith(dept)){
+        title=title.slice(dept.length).replace(/^[：:\s]+/,'').trim();
+      }
+      if(title.length<4)continue;
+      results.push({title,dept,dueDate,desc:''});
+    }
+    if(results.length===0){
+      // 若規則完全沒解析到，把每一行當一個任務（基本模式）
+      lines.filter(l=>l.trim().length>6).forEach(l=>{
+        const dm=l.match(dateRe);
+        results.push({title:l.trim().replace(/^[\-\*\•·▸►\d\.)、]\s*/,'').slice(0,80),dept:'',dueDate:dm?dm[1]+'/'+dm[2].padStart(2,'0')+'/'+dm[3].padStart(2,'0'):'',desc:''});
+      });
+    }
+    S.parsedTasks=results;
+    if(st){st.style.color='var(--green)';st.textContent='✓ 解析完成，共 '+S.parsedTasks.length+' 項行動項目';}
     renderParsedTasks();
   }catch(e){
     if(st){st.style.color='var(--red)';st.textContent='❌ 解析失敗：'+e.message;}
@@ -1255,14 +1314,39 @@ ${overdueT.map(t=>`- ${t.title}，期限：${t.dueDate}`).join('\n')||'無'}
 下週預計（${nextW.length}項）：
 ${nextW.map(t=>`- ${t.title}（${t.dueDate}）`).join('\n')||'無'}`;
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,system,messages:[{role:'user',content:user}]})});
-    const data=await res.json();
-    S.generatedReport=(data.content||[]).map(c=>c.text||'').join('');
+    // ── 本地模板產出週報（不需 API）──
+    const today=new Date();
+    const fmt=d=>d?d.replace(/\//g,'/'):'';
+    let rpt='';
+    rpt+='主旨：【週報】宜蘭廠區工作進度 '+S.weekLabel[0]+'\n\n';
+    rpt+='各位主管，您好：\n\n';
+    rpt+='以下為本週（'+S.weekLabel[0]+'）宜蘭廠區工作進度彙整，請惠覽。\n\n';
+    rpt+='【一、本週已完成事項（'+done.length+' 項）】\n';
+    if(done.length){done.forEach((t,i)=>{rpt+=(i+1)+'. '+t.title+'（'+( S.depts.find(d=>d.id===t.deptId)?.name||'未分配')+'）\n';});}else{rpt+='本週無完成項目\n';}
+    rpt+='\n【二、進行中任務（'+tasks.filter(t=>!DONE_ST.has(t.status||'')).length+' 項）】\n';
+    tasks.filter(t=>!DONE_ST.has(t.status||'')).forEach((t,i)=>{
+      const progLines=(t.progress||'').split('\n').filter(Boolean);
+      const latest=progLines.length?progLines[progLines.length-1].replace(/^\d+\.\S+\s/,''):'無最新進度';
+      rpt+=(i+1)+'. '+t.title+'（'+( S.depts.find(d=>d.id===t.deptId)?.name||'未分配')+'，'+(t.status||'進行中')+'）\n';
+      rpt+='   進度：'+latest+'\n';
+      if(t.dueDate)rpt+='   期限：'+fmt(t.dueDate)+'\n';
+    });
+    if(overdueT.length){
+      rpt+='\n【三、逾期項目（'+overdueT.length+' 項，請關注）】\n';
+      overdueT.forEach((t,i)=>{rpt+=(i+1)+'. '+t.title+'，期限：'+fmt(t.dueDate)+'\n';});
+    }
+    rpt+='\n【四、下週工作計畫（'+nextW.length+' 項）】\n';
+    if(nextW.length){nextW.forEach((t,i)=>{rpt+=(i+1)+'. '+t.title+'（'+fmt(t.dueDate)+'）\n';});}else{rpt+='依進度滾動安排\n';}
+    rpt+='\n【五、需主管協助事項】\n';
+    if(overdueT.length){rpt+='請協助督導以下逾期項目推進：\n';overdueT.slice(0,3).forEach(t=>{rpt+='• '+t.title+'\n';});}
+    else{rpt+='無\n';}
+    rpt+='\n以上，謝謝。\nLouis Lin 敬上';
+    S.generatedReport=rpt;
     await fbPatch(P_REPORTS+'/'+S.todayStr.replace(/\//g,'_'),{report:S.generatedReport,week:S.weekLabel[0],ts:Date.now()});
     if(st){st.style.color='var(--green)';st.textContent='✓ 週報已產出！';}
     if(S.lineNotify.weekReport){
       const lines=S.generatedReport.split('\n').filter(Boolean).slice(0,8).join('\n');
-      lineNotify(`📊 宜蘭廠區週報已產出\n週次：${S.weekLabel[0]}\n\n${lines}\n\n（完整內容請查看系統或 Email）`);
+      lineNotify('📊 宜蘭廠區週報已產出\n週次：'+S.weekLabel[0]+'\n\n'+lines+'\n\n（完整內容請查看系統）');
     }
   }catch(e){
     if(st){st.style.color='var(--red)';st.textContent='❌ 失敗：'+e.message;}
